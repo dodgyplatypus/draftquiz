@@ -5,7 +5,7 @@ require_once('config.php');
 
 // create connection handle
 try {
-	$db = new PDO($dbConnection, $dbUsername, $dbPassword);
+	$db = new PDO(DB_CONNECTION, DB_USER, DB_PW, array(), DB_PREFIX);
 }
 catch(PDOException $e) {
 	die('ERROR: ' . $e->getMessage());
@@ -22,8 +22,10 @@ if(!isset($_GET['match_id'])) {
 $matchID = preg_replace('/[^0-9]/', '', $_GET['match_id']);
 
 // get detailed match data
-$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id' . $matchID . '&key=' . $apiKey);
+$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id' . $matchID . '&key=' . API_KEY);
 $match = json_decode($json, true);
+
+print_r($match);
 
 // execute queries
 // TODO: write this (update match data, player data)

@@ -5,7 +5,7 @@ require_once('config.php');
 
 // create connection handle
 try {
-	$db = new PDO($dbConnection, $dbUsername, $dbPassword);
+	$db = new PDO(DB_CONNECTION, DB_USER, DB_PW);
 }
 catch(PDOException $e) {
 	die('ERROR: ' . $e->getMessage());
@@ -16,7 +16,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $db->exec('SET NAMES utf8');
 
 // get new match data
-$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&key=' . $apiKey);
+$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&key=' . API_KEY);
 $matches = json_decode($json, true);
 
 // execute queries
@@ -26,7 +26,7 @@ for($i = 0; $i < count($matches['result']['matches']); $i++) {
 		$db->beginTransaction();
 		try {
 			// insert match
-			$sql = 'INSERT INTO `match` (`id`, `start_time`) VALUES (:id, :start_time)';
+			$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` (`id`, `start_time`) VALUES (:id, :start_time)';
 			$stmt = $db->prepare($sql);
 			$stmt->bindValue(':id', $match['match_id'], PDO::PARAM_STR);
 			$stmt->bindValue(':start_time', $match['start_time'], PDO::PARAM_INT);
@@ -35,7 +35,7 @@ for($i = 0; $i < count($matches['result']['matches']); $i++) {
 			// insert players
 			for($j = 0; $j < 10; $j++) {
 				$player = $match['players'][$j];
-				$sql = 'INSERT INTO `match_player` (`account_id`, `match_id`, `hero_id`, `position`) VALUES (:account_id, :match_id, :hero_id, :position)';
+				$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match_player` (`account_id`, `match_id`, `hero_id`, `position`) VALUES (:account_id, :match_id, :hero_id, :position)';
 				$stmt = $db->prepare($sql);
 				$stmt->bindValue(':account_id', $player['account_id'], PDO::PARAM_INT);
 				$stmt->bindValue(':match_id', $match['match_id'], PDO::PARAM_STR);
