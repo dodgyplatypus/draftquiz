@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 22, 2014 at 09:44 PM
+-- Generation Time: May 23, 2014 at 08:22 PM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -41,9 +41,9 @@ CREATE TABLE IF NOT EXISTS `hero` (
 CREATE TABLE IF NOT EXISTS `match` (
   `id` varchar(16) COLLATE utf8_swedish_ci NOT NULL,
   `start_time` int(11) unsigned NOT NULL,
-  `duration` smallint(6) unsigned NOT NULL,
-  `winner` tinyint(4) unsigned NOT NULL,
-  `mode` tinyint(4) unsigned NOT NULL,
+  `duration` smallint(6) unsigned DEFAULT NULL,
+  `winner` tinyint(4) unsigned DEFAULT NULL,
+  `mode` tinyint(4) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
@@ -58,8 +58,20 @@ CREATE TABLE IF NOT EXISTS `match_player` (
   `match_id` varchar(16) COLLATE utf8_swedish_ci NOT NULL,
   `hero_id` smallint(5) unsigned NOT NULL,
   `position` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`match_id`,`account_id`)
+  PRIMARY KEY (`match_id`,`hero_id`,`account_id`),
+  KEY `hero_id` (`hero_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `match_player`
+--
+ALTER TABLE `match_player`
+  ADD CONSTRAINT `match_player_ibfk_1` FOREIGN KEY (`match_id`) REFERENCES `match` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `match_player_ibfk_2` FOREIGN KEY (`hero_id`) REFERENCES `hero` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
