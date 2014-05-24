@@ -15,20 +15,21 @@ $heroes = json_decode($json, true);
 $data = array();
 foreach($heroes['result']['heroes'] as $hero) {
 	$data[] = $hero['id'];
+	$data[] = str_replace('npc_dota_hero_', '', $hero['name']);
 	$data[] = $hero['localized_name'];
 }
 
 // create place holders
 $values = array();
 for($i = 0; $i < count($heroes['result']['heroes']); $i++) {
-	$values[] = '(?, ?)';
+	$values[] = '(?, ?, ?)';
 }
 $values = implode(', ', $values);
 
 // execute query
 $db->beginTransaction();
 try {
-	$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'hero (id, name) VALUES ' . $values . ' ON DUPLICATE KEY UPDATE name = VALUES(name)';
+	$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'hero (id, name, en_name) VALUES ' . $values . ' ON DUPLICATE KEY UPDATE name = VALUES(name), en_name = VALUES(en_name)';
 	$stmt = $db->prepare($sql);
 	$stmt->execute($data);
 	$db->commit();
