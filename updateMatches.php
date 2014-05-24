@@ -2,18 +2,10 @@
 
 // get settings
 require_once('config.php');
+require_once(INC_PATH . 'class/PdoFactory.php');
 
-// create connection handle
-try {
-	$db = new PDO(DB_CONNECTION, DB_USER, DB_PW);
-}
-catch(PDOException $e) {
-	die('ERROR: ' . $e->getMessage());
-}
-
-// configure connection
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->exec('SET NAMES utf8');
+// get connection handle
+$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 
 // get new match data
 $json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&key=' . API_KEY);

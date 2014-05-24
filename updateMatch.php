@@ -2,18 +2,10 @@
 
 // get settings
 require_once('config.php');
+require_once(INC_PATH . 'class/PdoFactory.php');
 
-// create connection handle
-try {
-	$db = new PDO(DB_CONNECTION, DB_USER, DB_PW, array(), DB_PREFIX);
-}
-catch(PDOException $e) {
-	die('ERROR: ' . $e->getMessage());
-}
-
-// configure connection
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->exec('SET NAMES utf8');
+// get connection handle
+$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 
 // get match id
 if(!isset($_GET['match_id'])) {

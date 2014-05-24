@@ -2,18 +2,10 @@
 
 // get settings
 require_once('config.php');
+require_once(INC_PATH . 'class/PdoFactory.php');
 
-// create connection handle
-try {
-	$db = new PDO(DB_CONNECTION, DB_USER, DB_PW, array());
-}
-catch(PDOException $e) {
-	die('ERROR: ' . $e->getMessage());
-}
-
-// configure connection
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->exec('SET NAMES utf8');
+// get connection handle
+$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 
 // get new hero data
 $json = file_get_contents('https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?key=' . API_KEY . '&language=en_us');
@@ -43,5 +35,5 @@ try {
 }
 catch(PDOException $e) {
 	$db->rollBack();
-	echo 'ERROR: ' . $e->getMessage();
+	Error::outputError("Failed to insert hero data to database", $e->getMessage(), 1);
 }
