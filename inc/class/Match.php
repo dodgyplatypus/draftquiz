@@ -4,6 +4,7 @@ require_once('config.php');
 
 /**
  * Presents a single Dota 2 match
+ * @todo This should have ALL the information about the match, inc players and so on
  */
 class Match {
 	public $id;
@@ -29,6 +30,7 @@ class Match {
 		if ($json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $this->id . '&key=' . API_KEY)) {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			$matchData = json_decode($json, true);
+			// @todo populate the fields from match_players if available
 			$this->startTime = $matchData['result']['start_time'];
 			$this->duration = $matchData['result']['duration'];
 			$this->winner = $matchData['result']['radiant_win'] == true ? 1 : 0;
