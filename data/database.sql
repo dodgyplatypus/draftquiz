@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `hero` (
 --
 
 CREATE TABLE IF NOT EXISTS `match` (
-  `id` varchar(16) COLLATE utf8_swedish_ci NOT NULL,
+  `id` bigint unsigned COLLATE utf8_swedish_ci NOT NULL,
   `start_time` int(11) unsigned NOT NULL,
   `duration` smallint(6) unsigned DEFAULT NULL,
   `winner` tinyint(4) unsigned DEFAULT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `match` (
 
 CREATE TABLE IF NOT EXISTS `match_player` (
   `account_id` int(10) unsigned NOT NULL,
-  `match_id` varchar(16) COLLATE utf8_swedish_ci NOT NULL,
+  `match_id` bigint unsigned NOT NULL,
   `hero_id` smallint(5) unsigned NOT NULL,
   `position` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`match_id`,`hero_id`,`account_id`),
