@@ -47,10 +47,10 @@ class Match {
 		try {
 			$stmt = $db->prepare($sql);
 			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode));
-			$this->publicId = $dbh->lastInsertId();
+			$this->publicId = $db->lastInsertId();
 			$db->commit();
 		}
-		catch(PDOException $e) {
+		catch (PDOException $e) {
 			$db->rollBack();
 			Error::outputError('Failed to insert match data to database', $e->getMessage(), 1);
 		}
@@ -74,7 +74,7 @@ class Match {
 				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
-			elseif($this->publicId) {
+			elseif ($this->publicId) {
 				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}

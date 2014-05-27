@@ -56,7 +56,7 @@ class MatchManager {
 					$matchList[] = $matchObject;
 					echo "Match " . $match['match_id'] . " added!\n";
 				}
-				catch(PDOException $e) {
+				catch (PDOException $e) {
 					$db->rollBack();
 					Error::outputError('Failed to insert match/players data', $e->getMessage(), 1);
 				}
