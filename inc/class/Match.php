@@ -7,7 +7,7 @@ require_once('config.php');
  * @todo This should have ALL the information about the match, inc players and so on
  */
 class Match {
-  public $publicId;
+	public $publicId;
 	public $matchId;
 	public $startTime;
 	public $duration;
@@ -102,7 +102,7 @@ class Match {
 		}
 		catch (Exception $e) {
 			Error::outputError('Can\'t load match information from database', $e->getMessage(), 1);
-				return false;
+			return false;
 		}
 	}
 }

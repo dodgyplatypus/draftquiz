@@ -96,9 +96,9 @@ class MatchManager {
 	
 	private function isValidMatch($match) {
 		if($match['lobby_type'] !== 0) return false;
-			foreach($match['players'] as $player) {
-				if($player['hero_id'] === 0) return false;
-			}
-			return true;
+		foreach($match['players'] as $player) {
+			if($player['hero_id'] === 0) return false;
+		}
+		return true;
 	}
 }
