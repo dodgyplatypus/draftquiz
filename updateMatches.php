@@ -3,8 +3,8 @@
 // get settings
 require_once('config.php');
 require_once(INC_PATH . 'class/PdoFactory.php');
-require_once(INC_PATH . 'class/MatchList.php');
+require_once(INC_PATH . 'class/MatchManager.php');
 
 // work in progress, will change a lot
-$matchList = new MatchList;
-$matchList->fetchFromApi(25);
+$matchManager = new MatchManager;
+$matchManager->fetchFromApi(25);

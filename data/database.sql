@@ -39,14 +39,16 @@ CREATE TABLE IF NOT EXISTS `hero` (
 -- Table structure for table `match`
 --
 
-CREATE TABLE IF NOT EXISTS `match` (
-  `id` bigint unsigned COLLATE utf8_swedish_ci NOT NULL,
+CREATE TABLE `match` (
+  `public_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Used by draft public API',
+  `match_id` bigint(20) unsigned NOT NULL,
   `start_time` int(11) unsigned NOT NULL,
   `duration` smallint(6) unsigned DEFAULT NULL,
   `winner` tinyint(4) unsigned DEFAULT NULL,
   `mode` tinyint(4) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+  PRIMARY KEY (`public_id`),
+  UNIQUE KEY `MATCHID_KEY` (`match_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -54,25 +56,21 @@ CREATE TABLE IF NOT EXISTS `match` (
 -- Table structure for table `match_player`
 --
 
-CREATE TABLE IF NOT EXISTS `match_player` (
+CREATE TABLE `match_player` (
   `account_id` int(10) unsigned NOT NULL,
-  `match_id` bigint unsigned NOT NULL,
+  `match_id` bigint(20) unsigned NOT NULL,
   `hero_id` smallint(5) unsigned NOT NULL,
   `position` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`match_id`,`hero_id`,`account_id`),
-  KEY `hero_id` (`hero_id`)
+  KEY `hero_id` (`hero_id`),
+  CONSTRAINT `hero_foreign_key` FOREIGN KEY (`hero_id`) REFERENCES `hero` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `match_foreign_key` FOREIGN KEY (`match_id`) REFERENCES `match` (`match_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 --
 -- Constraints for dumped tables
 --
 
---
--- Constraints for table `match_player`
---
-ALTER TABLE `match_player`
-  ADD CONSTRAINT `match_player_ibfk_1` FOREIGN KEY (`match_id`) REFERENCES `match` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `match_player_ibfk_2` FOREIGN KEY (`hero_id`) REFERENCES `hero` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
