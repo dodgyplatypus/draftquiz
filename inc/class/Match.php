@@ -97,12 +97,21 @@ class Match {
 			$stmt->execute(array($this->matchId));
 			$this->players = array();
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				$this->players[] = array('account_id' => $row['account_id'], 'hero_id' => $row['hero_id'], 'position' => $row['position']);
+				list($team, $position) = $this->parsePlayerPosition($row['position']);				
+				$this->players[] = array('account_id' => $row['account_id'], 'hero_id' => $row['hero_id'], 'team' => $team, 'position' => $position);
 			}
 		}
 		catch (Exception $e) {
 			Error::outputError('Can\'t load match information from database', $e->getMessage(), 1);
 			return false;
 		}
+	}
+	
+	function parsePlayerPosition($b) {
+		//echo ($pos & 1) . " : ";
+		$team = ($b >> 7) == 1 ? 'd' : 'r';
+		$position = 1 + ($b & 1) + ($b & 2) + ($b & 4);
+		return array($team, $position);
+		
 	}
 }
