@@ -7,3 +7,5 @@ define('DB_TABLE_PREFIX', '');
 define('API_KEY', '');
 
 define('INC_PATH', '/home/users/jamedbond/draftquiz/inc/');
+
+define('URL_ROOT', 'http://draftquiz.example.com/');
