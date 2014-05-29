@@ -74,3 +74,90 @@ span.attribution {
 #footer img {
 	margin: 0 0 0 30px;
 }
+
+/* CONTENT */
+#dire-heroes, #radiant-heroes {
+	border: 1px solid black;
+	border-radius: 10px;
+	padding-top: 0;
+	padding-left: 30px;
+	padding-top: 10px;
+	margin: 10px 0px;
+	height: 105px;
+	box-shadow: #000 2px 2px 3px;
+}
+
+#dire-heroes li, #radiant-heroes li {
+	border-radius: 15px;
+}
+
+li div.heroContainer {
+	border: 3px solid #000;
+	border-radius: 5px;
+	color: #bbb;
+	font-size: 0.7em;
+	font-weight: 600;
+	width: 127px;
+	padding: 3px;
+	background-image: url('../images/layout/grain_bg.png');
+	box-shadow: #111 1px 1px 5px;
+	position: relative;
+}
+
+
+li div.heroContainer img.heroAttr {
+	position: absolute;
+	right: -7px;
+	top: -7px;
+	width: 25px;
+	height: 25px;
+}
+
+li div.heroContainer div.heroBorder {
+	padding: 5px;
+	background-color: rgba(0, 0, 0, 0.75);
+	border-radius: 5px;
+	/*background-image: url('../images/layout/grain_bg.png');*/
+}
+
+li div.heroContainer div.heroBorder img {
+	border-radius: 5px;
+}
+
+li div.heroLabel {
+	font-family: georgia;
+	text-shadow: 1px 1px #000;
+	background: transparent;
+	margin-top: -3px;
+	padding-bottom: 6px;
+	line-height: 1em;
+	z-index: -1;
+	width: 108px;
+	overflow: hidden;
+	white-space:nowrap;
+	display: none;
+}
+
+
+#radiant-heroes, #guessButtons li#guessRadiant {
+	background-image: url('../images/layout/smoke_mist.jpg');
+}
+
+#dire-heroes, #guessButtons li#guessDire {
+	background-image: url('../images/layout/smoke_misty_backdrop.jpg');
+	background-position: right bottom;
+}
+
+#guessButtons li#guessDire, #guessButtons li#guessRadiant {
+	text-align: center;
+	padding-top: 0.5em;
+	height: 2.5em;
+	color: #eee;
+	font-size: 1.3em;
+	text-shadow: 2px 2px 3px #000;
+	text-transform: uppercase;
+	border-radius: 10px;	
+	box-shadow: #000 2px 2px 3px;
+	border: 1px solid #000;
+	margin: 15px 0px;
+}
