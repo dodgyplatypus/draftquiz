@@ -16,9 +16,10 @@ class MatchManager {
 		$count = (int) $count;
 		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-
+		$skill = 3;
+		
 		// get new match data
-		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&skill=3&matches_requested=' . $count . '&key=' . API_KEY);
+		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&skill=' . $skill . '&matches_requested=' . $count . '&key=' . API_KEY);
 
 		$matches = json_decode($json, true);
 		
@@ -26,11 +27,16 @@ class MatchManager {
 		// execute queries
 		for($i = 0; $i < count($matches['result']['matches']); $i++) {
 			$match = $matches['result']['matches'][$i];
-			if($this->isValidMatch($match)) {
-				$db->beginTransaction();
+			if($this->isValidMatch($match)) {				
 				try {
+					// test if match is already on the database, if it is, just go to the next one
+					$testMatch = new Match($match['match_id']);
+					if ($match->loadFromDb !== false) {
+						continue;
+					}
+					$db->beginTransaction();
 					// insert match
-					$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` (`id`, `start_time`) VALUES (:id, :start_time)';
+					$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` (`match_id`, `start_time`) VALUES (:id, :start_time)';
 					$stmt = $db->prepare($sql);
 					$stmt->bindValue(':id', $match['match_id'], PDO::PARAM_INT);
 					$stmt->bindValue(':start_time', $match['start_time'], PDO::PARAM_INT);
@@ -47,18 +53,23 @@ class MatchManager {
 						$stmt->bindValue(':position', $player['player_slot'], PDO::PARAM_INT);
 						$stmt->execute();
 					}
-					$db->commit();
 					
 					// get detailed match data
 					$matchObject = new Match($match['match_id']);
 					$matchObject->fetchFromApi();
-					$matchObject->saveToDb();
-					$matchList[] = $matchObject;
-					echo "Match " . $match['match_id'] . " added!\n";
+					if ($matchObject->isValid() === true) {
+						$db->commit();
+						$matchObject->skill = $skill;
+						$matchObject->saveToDb();
+						$matchList[] = $matchObject;
+					}
+					else {
+						$db->rollBack();
+					}
 				}
 				catch (PDOException $e) {
-					$db->rollBack();
 					Error::outputError('Failed to insert match/players data', $e->getMessage(), 1);
+					$db->rollBack();
 				}
 			}
 		}
