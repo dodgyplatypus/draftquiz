@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `hero` (
   `id` smallint(11) unsigned NOT NULL,
   `name` varchar(32) COLLATE utf8_swedish_ci NOT NULL,
   `en_name` varchar(32) COLLATE utf8_swedish_ci NOT NULL,
+  `attr` varchar(3) COLLATE utf8_swedish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
