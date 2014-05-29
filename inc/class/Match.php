@@ -14,6 +14,7 @@ class Match {
 	public $winner;
 	public $mode;
 	public $players;
+	public $skill;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -43,16 +44,16 @@ class Match {
 	public function saveToDb() {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
-		$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match SET id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode';
+		$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match SET match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':skill' => $this->skill));
 			$this->publicId = $db->lastInsertId();
 			$db->commit();
 		}
 		catch (PDOException $e) {
-			$db->rollBack();
 			Error::outputError('Failed to insert match data to database', $e->getMessage(), 1);
+			$db->rollBack();
 		}
 	}
 	
@@ -71,11 +72,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -92,13 +93,20 @@ class Match {
 			$this->duration = $row['duration'];
 			$this->winner = $row['winner'];
 			$this->mode = $row['mode'];
+			$this->skill = $row['skill'];
 			
 			$stmt = $db->prepare('SELECT account_id, hero_id, position FROM ' . DB_TABLE_PREFIX . 'match_player WHERE match_id = ?');
 			$stmt->execute(array($this->matchId));
 			$this->players = array();
-			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				list($team, $position) = $this->parsePlayerPosition($row['position']);				
-				$this->players[] = array('account_id' => $row['account_id'], 'hero_id' => $row['hero_id'], 'team' => $team, 'position' => $position);
+			
+			if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				do {
+					list($team, $position) = $this->parsePlayerPosition($row['position']);				
+					$this->players[] = array('account_id' => $row['account_id'], 'hero_id' => $row['hero_id'], 'team' => $team, 'position' => $position);
+				} while ($row = $stmt->fetch(PDO::FETCH_ASSOC));
+			}
+			else {
+				return false;
 			}
 		}
 		catch (Exception $e) {
@@ -111,7 +119,16 @@ class Match {
 		//echo ($pos & 1) . " : ";
 		$team = ($b >> 7) == 1 ? 'd' : 'r';
 		$position = 1 + ($b & 1) + ($b & 2) + ($b & 4);
-		return array($team, $position);
 		
+		return array($team, $position);
+	}
+	
+	function isValid() {
+		if ($this->duration == 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 }
