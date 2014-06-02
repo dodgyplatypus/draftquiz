@@ -1,23 +1,28 @@
 var heroes;
 var matchStack = [];
+var currentMatch;
 
 $(document).ready(function () {
-	getHeroes();
+	getHeroes(false);
 	// we go for non async ajax, since we want to preload images from first game
 	getMatches(10, false);
 	if (matchStack.length > 0) {
 		preloadImages(matchStack[0]);
 	}
+	nextMatch();
 });
 
 /**
  * Gets heroes from the API and populates global table heroes with the results
  */
-function getHeroes() {
+function getHeroes(useAsync) {
+	useAsync = typeof useAsync !== 'undefined' ? useAsync : true;
+	
 	if (heroes !== undefined) {
 		return heroes;
 	}
 	$.ajax({
+		async: useAsync,
 		url: '../api/getHeroes.php'
 	}).done(function(data) {
 		heroes = new Array();
@@ -28,6 +33,27 @@ function getHeroes() {
 	});;
 }
 
+function guessWinner(aGuess) {
+	$.ajax({
+		async: false,
+		type: 'GET',
+		data: { publicId: currentMatch.publicId, guess: aGuess, nocache: (new Date()).getTime() },
+		url: '../api/getResult.php'
+	}).done(function (data) {
+		if (data.winner == undefined) {
+			alert("API EI TOIMI!");
+		}
+		else if (data.winner == aGuess) {
+			alert("Correct!");
+		}
+		else {
+			alert("Wrong guess");
+		}
+		$(".dotabuff a").attr("href", "http://www.dotabuff.com/matches/" + data.match_id);
+		$("#guessButtons").hide();
+		$("#nextMatch").show();
+	});
+}
 
 /**
  * Gets a next game from a matchStack, populates it if needed
@@ -41,8 +67,11 @@ function nextMatch() {
 	else if (matchStack.length < 6) {
 		getMatches(10);
 	}
-		
-	displayMatch(matchStack.shift());
+	currentMatch = matchStack.shift();
+	displayMatch(currentMatch);
+	
+	$("#guessButtons").show();
+	$("#nextMatch").hide();
 	
 	if (matchStack.length > 0) {
 		preloadImages(matchStack[0]);
@@ -94,7 +123,10 @@ function preloadImages(match) {
 /**
  * Loads matches from the API
  */
-function getMatches(matchCount = 10, useAsync = true) {
+function getMatches(matchCount, useAsync) {
+	matchCount = typeof matchCount !== 'undefined' ? matchCount : 10;
+	useAsync = typeof useAsync !== 'undefined' ? useAsync : true;
+	
 	$.ajax({
 		async: useAsync,
 		type: 'GET',
