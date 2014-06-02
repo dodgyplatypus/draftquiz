@@ -42,7 +42,6 @@ class Match {
 			$this->mode = $matchData['result']['game_mode'];
 			$this->lobbyType = $matchData['result']['lobby_type'];
 			$this->players = $matchData['result']['players'];
-			$this->skill = $matchData['result']['skill'];
 		}
 	}
 	
