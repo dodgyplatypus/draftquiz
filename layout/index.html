@@ -38,24 +38,34 @@
 			</div>
 		</div>
 		
-		<div class="row">
+		<div class="row" id="guessButtons">
 			<div class="small-12 columns">
-				<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5" id="guessButtons">
+				<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5">
 					<li>&nbsp;</li>
-					<li id="guessDire" onclick="nextMatch();">Dire</li>	
+					<li id="guessDire" onclick="guessWinner(0);">Dire</li>	
 					<li>&nbsp;</li>				
-					<li id="guessRadiant" onclick="nextMatch();">Radiant</li>
+					<li id="guessRadiant" onclick="guessWinner(1);">Radiant</li>
 				</ul>
 			</div>
 		</div>
+		
+		<div class="row" id="nextMatch">
+			<div class="small-12 columns">
+				<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5" id="guessButtons">
+					<li>&nbsp;</li>
+					<li id="guessDire" class="dotabuff"><a href="">Dotabuff</a></li>	
+					<li>&nbsp;</li>				
+					<li id="guessRadiant" onclick="nextMatch();">Next match</li>
+				</ul>
+			</div>
+		</div>
+		
 		<div class="row">
 			<div class="small-12 columns">
 				<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5" id="radiant-heroes">
 				</ul>
 			</div>
-		</div>
-		
-		
+		</div>		
 		
 		<div class="row">
 			<div class="small-12 columns">
