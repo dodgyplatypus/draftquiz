@@ -15,6 +15,7 @@ class Match {
 	public $mode;
 	public $players;
 	public $skill;
+	public $lobbyType;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -30,6 +31,7 @@ class Match {
 			Error::outputError('Can\'t fetch from API: No ID given', 'Match->fetchFromApi');
 			return false;
 		}
+		
 		if ($json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $this->matchId . '&key=' . API_KEY)) {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			$matchData = json_decode($json, true);
@@ -38,17 +40,31 @@ class Match {
 			$this->duration = $matchData['result']['duration'];
 			$this->winner = $matchData['result']['radiant_win'] == true ? 1 : 0;
 			$this->mode = $matchData['result']['game_mode'];
+			$this->lobbyType = $matchData['result']['lobby_type'];
+			$this->players = $matchData['result']['players'];
+			$this->skill = $matchData['result']['skill'];
 		}
 	}
 	
 	public function saveToDb() {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
-		$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match SET match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill';
+		$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match SET 
+			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill, lobby_type = :lobby_type
+			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill, lobby_type = :lobby_type';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':skill' => $this->skill));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':skill' => $this->skill, ':lobby_type' => $this->lobbyType));
 			$this->publicId = $db->lastInsertId();
+			
+			if (is_array($this->players)) {
+				foreach ($this->players AS $p) {
+					$playerSql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match_player SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position';
+					$stmt = $db->prepare($playerSql);
+					$stmt->execute(array(':account_id' => $p['account_id'], ':match_id' => $this->matchId, ':hero_id' => $p['hero_id'], ':position' => $p['player_slot']));
+				}
+			}
+			
 			$db->commit();
 		}
 		catch (PDOException $e) {
@@ -72,11 +88,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -94,6 +110,7 @@ class Match {
 			$this->winner = $row['winner'];
 			$this->mode = $row['mode'];
 			$this->skill = $row['skill'];
+			$this->lobbyType = $row['lobby_type'];
 			
 			$stmt = $db->prepare('SELECT account_id, hero_id, position FROM ' . DB_TABLE_PREFIX . 'match_player WHERE match_id = ?');
 			$stmt->execute(array($this->matchId));
@@ -123,8 +140,25 @@ class Match {
 		return array($team, $position);
 	}
 	
-	function isValid() {
-		if ($this->duration == 0) {
+	function isValid($debug = false) {
+		if (is_array($this->players)) {
+			foreach ($this->players AS $p) {
+				if ($p['leaver_status'] === 1 || $p['hero_id'] === 0) {
+					if ($debug) { echo "Match no good, leaver_status {$p['leaver_status']}, hero_id {$p['hero_id']}\n"; }
+					return false;
+				}
+			}
+		}
+		if ($this->duration < 600) {
+			if ($debug) { echo "Match no good, duration {$this->duration}\n"; }
+			return false;
+		}
+		elseif ($this->mode > 5) {
+			if ($debug) { echo "Match no good, mode {$this->mode}\n"; }
+			return false;
+		}
+		elseif ($this->lobbyType > 0) {
+			if ($debug) { echo "Match no good, lobbyType {$this->mode}\n"; }
 			return false;
 		}
 		else {
