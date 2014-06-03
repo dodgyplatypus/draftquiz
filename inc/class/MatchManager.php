@@ -12,38 +12,42 @@ class MatchManager {
 	 * Fetches matches from api, and saves them to the database
 	 * @todo This really should return a list of matches
 	 */
-	public function fetchFromApi($count = 25) {
-		$count = (int) $count;
-		
+	public function fetchFromApi() {		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-		$skill = 3;
+		
+		$maxMatchSeqNum = $this->getMaxMatchSeqNum();
+		
 		// get new match data
-		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?min_players=10&skill=' . $skill . '&matches_requested=' . $count . '&key=' . API_KEY);
+		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/V001/?start_at_match_seq_num=' . $maxMatchSeqNum . '&key=' . API_KEY);
 
 		$matches = json_decode($json, true);
 		$matchList = array();
 		// execute queries
 		for($i = 0; $i < count($matches['result']['matches']); $i++) {
 			$match = $matches['result']['matches'][$i];
-			if($this->isValidMatch($match)) {
-				try {
-					// test if match is already on the database, if it is, just go to the next one
+				try {								
+				// get detailed match data
+				$matchObject = new Match($match['match_id']);
+				$matchObject->startTime = $match['start_time'];
+				$matchObject->duration = $match['duration'];
+				$matchObject->winner = $match['radiant_win'] == true ? 1 : 0;
+				$matchObject->mode = $match['game_mode'];
+				$matchObject->players = $match['players'];
+				$matchObject->lobbyType = $match['lobby_type'];
+				$matchObject->matchSeqNum = $match['match_seq_num'];
+				if ($matchObject->isValid() === true) {
+					// test if match is already on the database, 
+					// if it is, just go to the next one
 					$testMatch = new Match($match['match_id']);
 					if ($testMatch->loadFromDb() !== false) {
 						continue;
-					}					
-					// get detailed match data
-					$matchObject = new Match($match['match_id']);
-					$matchObject->fetchFromApi();
-					if ($matchObject->isValid() === true) {
-						$matchObject->skill = $skill;
-						$matchObject->saveToDb();
-						$matchList[] = $matchObject;
 					}
+					$matchObject->saveToDb();
+					$matchList[] = $matchObject;
 				}
-				catch (PDOException $e) {
-					Error::outputError('Failed to insert match/players data' . $e->getMessage(), $e->getMessage(), 1);
-				}
+			}
+			catch (PDOException $e) {
+				Error::outputError('Failed to insert match/players data' . $e->getMessage(), $e->getMessage(), 1);
 			}
 		}
 		return $matchList;
@@ -78,11 +82,17 @@ class MatchManager {
 		}
 	}
 	
-	private function isValidMatch($match) {
-		if($match['lobby_type'] !== 0) return false;
-		foreach($match['players'] as $player) {
-			if($player['hero_id'] === 0) return false;
+	public function getMaxMatchSeqNum() {
+		try {
+			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
+			$stmt = $db->prepare('SELECT MAX(match_seq_num) AS match_seq_num FROM ' . DB_TABLE_PREFIX . 'match');
+			$stmt->execute();
+			if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				return $row[0];
+			}
 		}
-		return true;
+		catch (Exception $e) {
+			Error::outputError('Failed to get max match_seq_number', $e->getMessage(), 1);
+		}
 	}
 }
