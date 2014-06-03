@@ -14,7 +14,6 @@ class Match {
 	public $winner;
 	public $mode;
 	public $players;
-	public $skill;
 	public $lobbyType;
 	public $matchSeqNum;
 	
@@ -31,11 +30,11 @@ class Match {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
 		$sql = 'INSERT INTO ' . DB_TABLE_PREFIX . 'match SET 
-			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill, lobby_type = :lobby_type, match_seq_num = :match_seq_num
-			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, skill = :skill, lobby_type = :lobby_type, match_seq_num = :match_seq_num';
+			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num
+			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':skill' => $this->skill, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum));
 			$this->publicId = $db->lastInsertId();
 			
 			if (is_array($this->players)) {
@@ -68,11 +67,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, skill, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, lobby_type FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -89,7 +88,6 @@ class Match {
 			$this->duration = $row['duration'];
 			$this->winner = $row['winner'];
 			$this->mode = $row['mode'];
-			$this->skill = $row['skill'];
 			$this->lobbyType = $row['lobby_type'];
 			
 			$stmt = $db->prepare('SELECT account_id, hero_id, position FROM ' . DB_TABLE_PREFIX . 'match_player WHERE match_id = ?');
