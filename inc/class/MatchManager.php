@@ -69,8 +69,8 @@ class MatchManager {
 			// http://jan.kneschke.de/projects/mysql/order-by-rand/
 			$stmt = $db->prepare('
 			SELECT r1.public_id
-				FROM ' . DB_TABLE_PREFIX . 'match AS r1 JOIN
-						 (SELECT (RAND() * (SELECT MAX(public_id) FROM ' . DB_TABLE_PREFIX . 'match)) AS public_id) AS r2
+				FROM `' . DB_TABLE_PREFIX . 'match` AS r1 JOIN
+						 (SELECT (RAND() * (SELECT MAX(public_id) FROM `' . DB_TABLE_PREFIX . 'match`)) AS public_id) AS r2
 				WHERE r1.public_id >= r2.public_id
 				ORDER BY r1.public_id ASC
 				LIMIT ' . $count);
@@ -91,7 +91,7 @@ class MatchManager {
 	public function getMaxMatchSeqNum() {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-			$stmt = $db->prepare('SELECT MAX(match_seq_num) AS match_seq_num FROM ' . DB_TABLE_PREFIX . 'match');
+			$stmt = $db->prepare('SELECT MAX(match_seq_num) AS match_seq_num FROM `' . DB_TABLE_PREFIX . 'match`');
 			$stmt->execute();
 			if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				return $row[0];
