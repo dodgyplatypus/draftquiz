@@ -41,15 +41,16 @@ CREATE TABLE IF NOT EXISTS `hero` (
 --
 
 CREATE TABLE `match` (
-  `public_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Used by draft public API',
+  `public_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Used by draft public API',
   `match_id` bigint(20) unsigned NOT NULL,
+  `match_seq_num` bigint(20) unsigned NOT NULL,
   `start_time` int(11) unsigned NOT NULL,
-  `duration` smallint(6) unsigned DEFAULT NULL,
-  `winner` tinyint(4) unsigned DEFAULT NULL,
-  `mode` tinyint(4) unsigned DEFAULT NULL,
-  `skill` tinyint(4) unsigned DEFAULT NULL,
-  `lobby_type` tinyint(4) unsigned DEFAULT NULL,
-  `match_seq_num` int(10) unsigned DEFAULT NULL,
+  `duration` smallint(6) unsigned NOT NULL,
+  `winner` tinyint(4) unsigned NOT NULL,
+  `mode` tinyint(4) unsigned NOT NULL,
+  `lobby_type` tinyint(4) unsigned NOT NULL,
+  PRIMARY KEY (`public_id`),
+  UNIQUE KEY `MATCHID_KEY` (`match_id`)
   PRIMARY KEY (`public_id`),
   UNIQUE KEY `MATCHID_KEY` (`match_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
