@@ -16,6 +16,12 @@ class MatchManager {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		
 		$maxMatchSeqNum = $this->getMaxMatchSeqNum();
+		if ($maxMatchSeqNum == false) {
+			// fallback, so we dont get the very first matches
+			// please change this before populating the database much
+			// @todo better solution
+			$maxMatchSeqNum = 629049370;
+		}
 		
 		// get new match data
 		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/V001/?start_at_match_seq_num=' . $maxMatchSeqNum . '&key=' . API_KEY);
@@ -89,6 +95,9 @@ class MatchManager {
 			$stmt->execute();
 			if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				return $row[0];
+			}
+			else {
+				return false;
 			}
 		}
 		catch (Exception $e) {
