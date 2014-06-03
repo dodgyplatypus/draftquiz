@@ -51,8 +51,6 @@ CREATE TABLE `match` (
   `lobby_type` tinyint(4) unsigned NOT NULL,
   PRIMARY KEY (`public_id`),
   UNIQUE KEY `MATCHID_KEY` (`match_id`)
-  PRIMARY KEY (`public_id`),
-  UNIQUE KEY `MATCHID_KEY` (`match_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
