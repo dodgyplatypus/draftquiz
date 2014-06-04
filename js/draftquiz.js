@@ -23,7 +23,7 @@ function getHeroes(useAsync) {
 	}
 	$.ajax({
 		async: useAsync,
-		url: '../api/getHeroes.php'
+		url: 'api/getHeroes.php'
 	}).done(function(data) {
 		heroes = new Array();
 		$.each(data, function(i, e) {
@@ -38,7 +38,7 @@ function guessWinner(aGuess) {
 		async: false,
 		type: 'GET',
 		data: { publicId: currentMatch.publicId, guess: aGuess, nocache: (new Date()).getTime() },
-		url: '../api/getResult.php'
+		url: 'api/getResult.php'
 	}).done(function (data) {
 		if (data.winner == undefined) {
 			alert("API EI TOIMI!");
@@ -131,7 +131,7 @@ function getMatches(matchCount, useAsync) {
 		async: useAsync,
 		type: 'GET',
 		data: { nocache: (new Date()).getTime() },
-		url: '../api/getRandomMatches.php',
+		url: 'api/getRandomMatches.php',
 		success: appendMatchStack
 	});
 }
