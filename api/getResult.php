@@ -19,7 +19,7 @@ elseif ($guess !== "0" && $guess !== "1") {
 else {
 	try {		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-		$stmt = $db->prepare('SELECT match_id, duration, winner, mode FROM ' . DB_TABLE_PREFIX . 'match WHERE public_id = ?');
+		$stmt = $db->prepare('SELECT match_id, duration, winner, mode FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?');
 		$stmt->execute(array($publicId));
 
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
