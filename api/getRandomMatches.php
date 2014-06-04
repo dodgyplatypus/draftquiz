@@ -17,8 +17,13 @@ if (is_array($matches)) {
 	foreach ($matches AS $m) {
 		$players = array();
 		foreach ($m->players AS $p) {
-			$players[] = array('hero' => $p['hero_id'], 'team' => $p['team'], 'position' => $p['position']);
-			
+			// lets put players in order by position, 
+			// easier to show them in correct order in frontend
+			$index = $p['position'];
+			if ($p['team'] === "r") {
+				$index += 5;
+			}
+			$players[$index] = array('hero' => $p['hero_id'], 'team' => $p['team'], 'position' => $p['position']);			
 		}
 		$output[] = array("publicId" => $m->publicId, "players" => $players);
 	}
