@@ -12,6 +12,16 @@ $(document).ready(function () {
 	nextMatch();
 });
 
+$(document).on('click', '.vote-dire', function() {
+	guessWinner(0);
+	return false;
+});
+
+$(document).on('click', '.vote-radiant', function() {
+	guessWinner(1);
+	return false;
+});
+
 /**
  * Gets heroes from the API and populates global table heroes with the results
  */
@@ -45,9 +55,11 @@ function guessWinner(aGuess) {
 		}
 		else if (data.winner == aGuess) {
 			alert("Correct!");
+			nextMatch();
 		}
 		else {
 			alert("Wrong guess");
+			nextMatch();
 		}
 		$(".dotabuff a").attr("href", "http://www.dotabuff.com/matches/" + data.match_id);
 		$("#guessButtons").hide();
@@ -83,19 +95,11 @@ function nextMatch() {
  * @todo put heroes in correct order
  */
 function displayMatch(match) {
-	radiantHtml = direHtml = "";
+	radiantHtml = "<li>Radiant</li>";
+	direHtml = "<li>Dire</li>";
 	debug("Showing new game, matches left in cache: " + matchStack.length);
 	$.each(match.players, function(i, e) {
-		heroHtml = '\
-		<li> \
-			<div class="heroContainer">\
-				<img src="images/layout/icon_' + heroes[this.hero].attr + '.png" alt="Attribute" class="heroAttr">\
-				<div class="heroBorder">\
-				<div class="heroLabel">' + heroes[this.hero].en_name + '</div>\
-				<img src="' + heroes[this.hero].image + '" alt="' + heroes[this.hero].en_name + '" title="'  + heroes[this.hero].en_name + '">\
-				</div>\
-			</div>\
-		</li>';
+		heroHtml = '<li><img src="' + heroes[this.hero].image + '" alt="' + heroes[this.hero].en_name + '" title="'  + heroes[this.hero].en_name + '"></li>';
 		if (this.team == "r") {
 			radiantHtml += heroHtml
 		}

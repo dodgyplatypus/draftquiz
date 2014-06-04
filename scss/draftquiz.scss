@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+$default-space: 0.9375rem;
+
 @mixin body-text() {
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 12px;
@@ -8,7 +10,7 @@
 
 body {
 	@include body-text();
-	
+	min-width: 480px;
 	background: url("../images/layout/bg_body.jpg") #353745;
 	background-size: cover;
 }
@@ -22,15 +24,15 @@ body {
 /* HEADER */
 #logo {
 	display: block;
-	margin: 0.9375rem 0;
+	margin: $default-space 0;
 }
 
 /* FOOTER */
 #footer {
 	clear: both;
 	overflow: auto;
-	margin: 0 0 0.9375rem;
-	padding: 0 0.9375rem;
+	margin: 0 0 $default-space;
+	padding: 0 $default-space;
 	font-weight: bold;
 	text-align: center;
 	text-transform: uppercase;
@@ -59,18 +61,55 @@ body {
 }
 
 /* CONTENT */
+.vote-dire,
+.vote-radiant {
+	@include body-text();
+	
+	#dire-heroes {
+		background: red;
+	}
+	
+	#radiant-heroes {
+		background: green;
+	}
+	
+	&.vote-dire:hover {
+		@include body-text();
+		font-weight: bold;
+		
+		#dire-heroes {
+			background: orangered;
+		}
+	}
+	
+	&.vote-radiant:hover {
+		@include body-text();
+		font-weight: bold;
+		
+		#radiant-heroes {
+			background: #608000;
+		}
+	}
+	
+	&.vote-radiant:active,
+	&.vote-dire:active,
+	&.vote-radiant:visited,
+	&.vote-dire:visited,	{
+		@include body-text();
+	}
+}
+
+
 #dire-heroes, 
 #radiant-heroes {
-	height: 105px;
-	margin: 0 0 0.9375rem;
-	padding: 0 0.9375rem;
+	margin: 0 0 $default-space;
+	padding: $default-space;
 	border: 2px solid black;
-}
-
-#dire-heroes {
-	background: red;
-}
-
-#radiant-heroes {
-	background: green;
+	
+	li {
+		width: 16.5%;
+		max-width: 127px;
+		padding: 0 $default-space 0 0;
+		line-height: 100%;
+	}
 }
