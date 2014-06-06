@@ -8,6 +8,26 @@ $default-space: 0.9375rem;
 	color: #000000;
 }
 
+@mixin dire-background() {
+	@include body-text();
+	background: red;
+
+	&:active, &:focus, &:hover {
+		font-weight: bold;
+		background: orangered;
+	}
+}
+
+@mixin radiant-background() {
+	@include body-text();
+	background: green;
+
+	&:active, &:focus, &:hover {
+		font-weight: bold;
+		background: #608000;
+	}
+}
+
 body {
 	@include body-text();
 	min-width: 480px;
@@ -19,6 +39,11 @@ body {
 #page {
 	margin: 10px 0 20px;
 	background: #ffffff;
+	
+	>.row {
+		margin-bottom: $default-space;
+		padding: 0 $default-space;
+	}
 }
 
 /* HEADER */
@@ -27,12 +52,38 @@ body {
 	margin: $default-space 0;
 }
 
+/* CONTENT */
+.vote-dire {
+	@include dire-background();
+	padding: $default-space;
+	border: 2px solid #333333;
+	
+}
+
+.vote-radiant {
+	@include radiant-background();
+	padding: $default-space;
+	border: 2px solid #333333;
+}
+
+.heroes {
+	.hero {
+		padding: 8%;
+		background: #333333;
+		border-radius: 8px;
+		
+		img {
+			width: 100%;
+		}
+	}
+}
+
 /* FOOTER */
 #footer {
 	clear: both;
 	overflow: auto;
 	margin: 0 0 $default-space;
-	padding: 0 $default-space;
+	padding: 0 !important;
 	font-weight: bold;
 	text-align: center;
 	text-transform: uppercase;
@@ -43,7 +94,7 @@ body {
 	span.copyright {
 		float: left;
 	}
-	
+
 	a {
 		display: inline-block;
 		margin: 0 0 0 25px;
@@ -54,62 +105,8 @@ body {
 	a:hover {
 		color: #cccccc;
 	}
-	
+
 	img {
 		margin: 0 0 0 30px;
-	}
-}
-
-/* CONTENT */
-.vote-dire,
-.vote-radiant {
-	@include body-text();
-	
-	#dire-heroes {
-		background: red;
-	}
-	
-	#radiant-heroes {
-		background: green;
-	}
-	
-	&.vote-dire:hover {
-		@include body-text();
-		font-weight: bold;
-		
-		#dire-heroes {
-			background: orangered;
-		}
-	}
-	
-	&.vote-radiant:hover {
-		@include body-text();
-		font-weight: bold;
-		
-		#radiant-heroes {
-			background: #608000;
-		}
-	}
-	
-	&.vote-radiant:active,
-	&.vote-dire:active,
-	&.vote-radiant:visited,
-	&.vote-dire:visited,	{
-		@include body-text();
-	}
-}
-
-
-#dire-heroes, 
-#radiant-heroes {
-	margin: 0 0 $default-space;
-	padding: $default-space;
-	border: 2px solid black;
-	
-	li {
-		width: 16.5%;
-		max-width: 127px;
-		padding: 0 $default-space 0 0;
-		line-height: 100%;
 	}
 }
