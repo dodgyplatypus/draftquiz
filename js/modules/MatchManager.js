@@ -186,11 +186,24 @@ var MatchManager = (function($) {
 	 * @param {object} match
 	 */
 	var showMatch = function(match) {
-		radiantHtml = "";
-		direHtml = "";
-
+		var radiantHtml = "";
+		var direHtml = "";
+		var colors = {
+			agi: '00ff00',
+			int: '0000ff',
+			str: 'ff0000'
+		}
+		
 		$.each(match.players, function(i, player) {
-			heroHtml = '<li><div class="hero"><img src="' + heroes[player.hero].image + '" alt="' + heroes[player.hero].en_name + '" title="' + heroes[player.hero].en_name + '"></div></li>';
+			heroHtml = '<li>\n\
+							<div class="hero outer">\n\
+								<div class="inner">\n\
+									<img class="portrait" src="' + heroes[player.hero].image + '" alt="' + heroes[player.hero].en_name + '" title="' + heroes[player.hero].en_name + '">\n\
+									<img class="role" src="http://www.placehold.it/30x30/fff/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/aaa/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/ccc/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/111/fff" alt="Role" title="Role" />\n\
+									<div class="attribute"><img src="http://www.placehold.it/30x30/' + colors[heroes[player.hero].attr] + '" /></div>\n\
+								</div>\n\
+							</div>\n\
+						</li>';
 			if (player.team === "r") {
 				radiantHtml += heroHtml;
 			}

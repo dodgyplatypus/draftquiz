@@ -68,12 +68,42 @@ body {
 
 .heroes {
 	.hero {
-		padding: 8%;
-		background: #333333;
-		border-radius: 8px;
+		position: relative;
+		padding: 4%;
+		background: #000000;
+		border-radius: 8%;
 		
-		img {
+		.inner {
+			padding: 6%;
+			background: #333333;
+			border-radius: 4%;
+		}
+		
+		img.portrait {
 			width: 100%;
+		}
+		
+		img.role {
+			display: inline-block;
+			width: 25%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		div.attribute {
+			position: absolute;
+			top: 2%;
+			right: 2%;
+			width: 20%;
+			padding: 3%;
+			border-radius: 50%;
+			background: #555;
+			
+			img {
+				display: block;
+				width: 100%;
+				border-radius: 50%;
+			}
 		}
 	}
 }
