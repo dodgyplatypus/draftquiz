@@ -23,6 +23,8 @@
  *   preloadImages()
  *   showMatch()
  *   updateConfig(settings)
+ *   addScore(correct)
+ *   displayScore()
  */
 
 var MatchManager = (function($) {
@@ -43,6 +45,7 @@ var MatchManager = (function($) {
 	 */
 	var init = function(settings) {
 		updateConfig(settings);
+		displayScore();
 		getHeroes(function() {
 			getMatches(function() {
 				nextMatch();
@@ -57,6 +60,7 @@ var MatchManager = (function($) {
 	 */
 	var guessWinner = function(guess) {
 		if (canGuess === false) {
+			nextMatch();
 			return false;
 		}
 
@@ -72,18 +76,20 @@ var MatchManager = (function($) {
 			},
 			success: function(data) {
 				if (data.winner === guess.toString()) {
-					alert("Correct :D");
+					$('#result').html("Correct!");
+					addScore(1);
 				}
 				else {
-					alert("Wrong :(");
+					$('#result').html("Wrong");
+					addScore(0);
 				}
-				nextMatch();
 			},
 			error: function() {
 				alert("API IS KAPUT! :O");
 			},
 			complete: function() {
-				canGuess = true;
+				$('#result').css('visibility', 'visible');
+				$('#button-nextmatch').css('visibility', 'visible');
 				return false;
 			}
 		});
@@ -153,11 +159,14 @@ var MatchManager = (function($) {
 	 * Shift next match from list and show it
 	 */
 	var nextMatch = function() {
+		$('#button-nextmatch').css('visibility', 'hidden');
+		$('#result').css('visibility', 'hidden');
 		currentMatch = matches.shift();
 		getMatches();
 		preloadImages();
 
 		if (typeof currentMatch !== 'undefined') {
+			canGuess = true;
 			showMatch(currentMatch);
 		}
 		else {
@@ -227,12 +236,43 @@ var MatchManager = (function($) {
 			}
 		}
 	};
-
+	
+	/**
+	 * Keeps track of score, correct guesses and total
+	 * Keeps UI updated as well
+	 * @param correct integer
+	 */
+	var addScore = function(correct) {
+		if (localStorage.getItem('scoreTotal') === null) {
+			localStorage.setItem('scoreCorrect', '0')
+			localStorage.setItem('scoreTotal', '0')
+		}
+		localStorage['scoreCorrect'] = parseInt(localStorage['scoreCorrect']) + correct;
+		localStorage['scoreTotal'] = parseInt(localStorage['scoreTotal']) + 1;
+		
+		displayScore();
+	}
+	
+	var displayScore = function() {
+		if (localStorage.getItem('scoreTotal') === null) {
+			localStorage.setItem('scoreCorrect', '0')
+			localStorage.setItem('scoreTotal', '0')
+		}
+		var scoreCorrect = parseInt(localStorage['scoreCorrect']);
+		var scoreTotal = parseInt(localStorage['scoreTotal']);
+		var scoreRatio = Math.round(scoreCorrect / scoreTotal * 100 * 10) / 10;
+		
+		$('#score-correct').html(scoreCorrect);
+		$('#score-total').html(scoreTotal);
+		$('#score-ratio').html(scoreRatio + '%');
+	}
+	
 	/**
 	 * Return interface
 	 */
 	return {
 		init: init,
-		guessWinner: guessWinner
+		guessWinner: guessWinner,
+		nextMatch: nextMatch
 	};
 }(jQuery));
