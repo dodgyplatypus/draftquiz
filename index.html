@@ -15,8 +15,15 @@
 
 		<div class="row">
 			<div id="page" class="small-12 columns">
-				<img id="logo" src="images/layout/logo.png" alt="Draft Quiz: Guess the winner from draft results" />
-
+				<div class="row">
+					<div class="small-12 columns columns-score">
+						<ul class="small-block-grid-2 medium-block-grid-2 large-block-grid-2">
+							<li><img id="logo" src="images/layout/logo.png" alt="Draft Quiz: Guess the winner from draft results" /></li>							
+							<li id="score"><span id="score-correct"></span>/<span id="score-total"></span> <span id="score-ratio"></span></li>
+						</ul>
+					</div>
+				</div>
+				
 				<div class="row heroes">
 					<div class="small-12 columns vote-dire">
 						<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5" id="dire-heroes"></ul>
@@ -28,7 +35,16 @@
 						<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5" id="radiant-heroes"></ul>
 					</div>
 				</div>
-
+				
+				<div class="row">
+					<div class="small-12 columns">
+						<ul class="small-block-grid-5 medium-block-grid-5 large-block-grid-5">
+							<li id="result"></li>
+							<li id="button-nextmatch">Next Match</li>
+						</ul>
+					</div>
+				</div>
+				
 				<div id="footer" class="row">
 					<div class="small-12 columns">
 						<span class="copyright">&copy 2014 Draft Quiz</span>
