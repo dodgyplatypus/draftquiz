@@ -53,10 +53,38 @@ class MatchManager {
 				}
 			}
 			catch (PDOException $e) {
-				Error::outputError('Failed to insert match/players data' . $e->getMessage(), $e->getMessage(), 1);
+				Error::outputError('Failed to insert match/players data' . $e, $e, 1);
 			}
 		}
 		return $matchList;
+	}
+	
+	public function fetchFromApiByPlayerId($playerId, $matchLimit = 25, $mmr = false) {
+		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
+		
+		$playerId = (int) $playerId;
+		$matchLimit = (int) $matchLimit;
+		
+		if ($playerId === 0) {
+			throw new Exception("No playerId given, can't fetch matches");
+		}
+		
+		// list of matches
+		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?account_id=' . $playerId . '&matches_requested=' . $matchLimit . '&key=' . API_KEY);
+		
+		$matchesData = json_decode($json, true);
+		
+		$matches = array();
+		for($i = 0; $i < count($matchesData['result']['matches']); $i++) {
+			$match = new Match($matchesData['result']['matches'][$i]['match_id']);
+			$match->fetchFromApi();
+			$match->mmr = $mmr;
+			if ($match->isValid()) {
+				$match->saveToDb();
+			}
+		}
+		
+		return $matches;
 	}
 	
 	public function getRandomMatches($count = 10) {
@@ -84,7 +112,7 @@ class MatchManager {
 			return $matches;
 		}
 		catch (Exception $e) {
-			Error::outputError('Failed to get random matches', $e->getMessage(), 1);
+			Error::outputError('Failed to get random matches', $e, 1);
 		}
 	}
 	
@@ -101,7 +129,7 @@ class MatchManager {
 			}
 		}
 		catch (Exception $e) {
-			Error::outputError('Failed to get max match_seq_number', $e->getMessage(), 1);
+			Error::outputError('Failed to get max match_seq_number', $e, 1);
 		}
 	}
 }
