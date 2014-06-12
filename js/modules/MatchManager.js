@@ -15,11 +15,11 @@
  * Public methods:
  *   init(settings)
  *   guessWinner(guess)
+ *   nextMatch()
  * 
  * Private methods:
  *   getHeroes(callback)
  *   getMatches(callback)
- *   nextMatch()
  *   preloadImages()
  *   showMatch()
  *   updateConfig(settings)
