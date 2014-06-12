@@ -49,6 +49,7 @@ CREATE TABLE `match` (
   `winner` tinyint(4) unsigned NOT NULL,
   `mode` tinyint(4) unsigned NOT NULL,
   `lobby_type` tinyint(4) unsigned NOT NULL,
+  `mmr` smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`public_id`),
   UNIQUE KEY `MATCHID_KEY` (`match_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
