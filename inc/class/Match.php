@@ -16,6 +16,7 @@ class Match {
 	public $players;
 	public $lobbyType;
 	public $matchSeqNum;
+	public $mmr;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -25,21 +26,41 @@ class Match {
 				break;
 		endswitch;
 	}
+	
+	public function fetchFromApi() {
+		if (!isset($this->matchId)) {
+			Error::outputError('Can\'t fetch from API: No ID given', 'Match->fetchFromApi');
+			return false;
+		}
 		
+		if ($json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=' . $this->matchId . '&key=' . API_KEY)) {
+			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
+			$matchData = json_decode($json, true);
+			// @todo populate the fields from match_players if available
+			$this->startTime = $matchData['result']['start_time'];
+			$this->duration = $matchData['result']['duration'];
+			$this->winner = $matchData['result']['radiant_win'] == true ? 1 : 0;
+			$this->mode = $matchData['result']['game_mode'];
+			$this->lobbyType = $matchData['result']['lobby_type'];
+			$this->players = $matchData['result']['players'];
+			$this->matchSeqNum = $matchData['result']['match_seq_num'];
+		}
+	}
+	
 	public function saveToDb() {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
 		$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` SET 
-			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num
-			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num';
+			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr
+			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum, ':mmr' => $this->mmr));
 			$this->publicId = $db->lastInsertId();
 			
 			if (is_array($this->players)) {
 				foreach ($this->players AS $p) {
-					$playerSql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match_player` SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position';
+					$playerSql = 'INSERT IGNORE INTO `' . DB_TABLE_PREFIX . 'match_player` SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position';
 					$stmt = $db->prepare($playerSql);
 					$stmt->execute(array(':account_id' => $p['account_id'], ':match_id' => $this->matchId, ':hero_id' => $p['hero_id'], ':position' => $p['player_slot']));
 				}
@@ -47,7 +68,7 @@ class Match {
 			$db->commit();
 		}
 		catch (PDOException $e) {
-			Error::outputError('Failed to insert match data to database', $e->getMessage(), 1);
+			Error::outputError('Failed to insert match data to database', $e, 1);
 			$db->rollBack();
 		}
 	}
@@ -105,7 +126,7 @@ class Match {
 			}
 		}
 		catch (Exception $e) {
-			Error::outputError('Can\'t load match information from database', $e->getMessage(), 1);
+			Error::outputError('Can\'t load match information from database', $e, 1);
 			return false;
 		}
 	}
