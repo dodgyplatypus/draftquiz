@@ -3,14 +3,14 @@
 $default-space: 0.9375rem;
 
 @mixin body-text() {
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	color: #000000;
 }
 
 @mixin dire-background() {
 	@include body-text();
-	background: red;
+	background: url('../images/layout/smoke_misty_backdrop.jpg');
 
 	&:active, &:focus, &:hover {
 		font-weight: bold;
@@ -20,7 +20,7 @@ $default-space: 0.9375rem;
 
 @mixin radiant-background() {
 	@include body-text();
-	background: green;
+	background: url('../images/layout/smoke_mist.jpg');
 
 	&:active, &:focus, &:hover {
 		font-weight: bold;
@@ -53,18 +53,27 @@ body {
 	margin: $default-space 0;
 }
 
+#score {
+	text-align: center;
+	padding: 2rem;
+}
+
 /* CONTENT */
-.vote-dire {
-	@include dire-background();
+.vote-dire, .vote-radiant {
 	padding: $default-space;
 	border: 2px solid #333333;
 	
+	li {
+		padding-bottom: 0;
+	}	
+}
+
+.vote-dire {	
+	@include dire-background();
 }
 
 .vote-radiant {
 	@include radiant-background();
-	padding: $default-space;
-	border: 2px solid #333333;
 }
 
 .heroes {
@@ -96,7 +105,6 @@ body {
 			top: 2%;
 			right: 2%;
 			width: 20%;
-			padding: 3%;
 			border-radius: 50%;
 			background: #555;
 			

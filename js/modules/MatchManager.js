@@ -83,6 +83,7 @@ var MatchManager = (function($) {
 					$('#result').html("Wrong");
 					addScore(0);
 				}
+				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '">Dotabuff</a>');
 			},
 			error: function() {
 				alert("API IS KAPUT! :O");
@@ -90,6 +91,7 @@ var MatchManager = (function($) {
 			complete: function() {
 				$('#result').css('visibility', 'visible');
 				$('#button-nextmatch').css('visibility', 'visible');
+				$('#button-external-link').css('visibility', 'visible');
 				return false;
 			}
 		});
@@ -160,7 +162,8 @@ var MatchManager = (function($) {
 	 */
 	var nextMatch = function() {
 		$('#button-nextmatch').css('visibility', 'hidden');
-		$('#result').css('visibility', 'hidden');
+		$('#result').css('visibility', 'hidden');		
+		$('#button-external-link').css('visibility', 'hidden');
 		currentMatch = matches.shift();
 		getMatches();
 		preloadImages();
@@ -197,19 +200,13 @@ var MatchManager = (function($) {
 	var showMatch = function(match) {
 		var radiantHtml = "";
 		var direHtml = "";
-		var colors = {
-			agi: '00ff00',
-			int: '0000ff',
-			str: 'ff0000'
-		}
 		
 		$.each(match.players, function(i, player) {
 			heroHtml = '<li>\n\
 							<div class="hero outer">\n\
 								<div class="inner">\n\
 									<img class="portrait" src="' + heroes[player.hero].image + '" alt="' + heroes[player.hero].en_name + '" title="' + heroes[player.hero].en_name + '">\n\
-									<img class="role" src="http://www.placehold.it/30x30/fff/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/aaa/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/ccc/000" alt="Role" title="Role" /><img class="role" src="http://www.placehold.it/30x30/111/fff" alt="Role" title="Role" />\n\
-									<div class="attribute"><img src="http://www.placehold.it/30x30/' + colors[heroes[player.hero].attr] + '" /></div>\n\
+									<div class="attribute"><img src="images/layout/icon_' + heroes[player.hero].attr + '.png" /></div>\n\
 								</div>\n\
 							</div>\n\
 						</li>';
