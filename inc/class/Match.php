@@ -17,6 +17,11 @@ class Match {
 	public $lobbyType;
 	public $matchSeqNum;
 	public $mmr;
+	public $towerStatusRadiant;
+	public $towerStatusDire;
+	public $cluster;
+	public $firstBloodTime;
+	public $leagueId;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -44,6 +49,13 @@ class Match {
 			$this->lobbyType = $matchData['result']['lobby_type'];
 			$this->players = $matchData['result']['players'];
 			$this->matchSeqNum = $matchData['result']['match_seq_num'];
+			$this->towerStatusRadiant = $matchData['result']['tower_status_radiant'];
+			$this->towerStatusDire = $matchData['result']['tower_status_dire'];
+			$this->barracksStatusRadiant = $matchData['result']['barracks_status_radiant'];
+			$this->barracksStatusDire = $matchData['result']['barracks_status_dire'];
+			$this->cluster = $matchData['result']['cluster'];
+			$this->firstBloodTime = $matchData['result']['first_blood_time'];
+			$this->leagueId = $matchData['result']['leagueid'];
 		}
 	}
 	
@@ -51,18 +63,25 @@ class Match {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
 		$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` SET 
-			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr
-			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr';
+			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id
+			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum, ':mmr' => $this->mmr));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum, ':mmr' => $this->mmr, ':tower_status_radiant' => $this->towerStatusRadiant, ':tower_status_dire' => $this->towerStatusDire, ':barracks_status_radiant' => $this->barracksStatusRadiant, ':barracks_status_dire' => $this->barracksStatusDire, ':cluster' => $this->cluster, ':first_blood_time' => $this->firstBloodTime, ':league_id' => $this->leagueId));
 			$this->publicId = $db->lastInsertId();
 			
 			if (is_array($this->players)) {
 				foreach ($this->players AS $p) {
-					$playerSql = 'INSERT IGNORE INTO `' . DB_TABLE_PREFIX . 'match_player` SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position';
-					$stmt = $db->prepare($playerSql);
-					$stmt->execute(array(':account_id' => $p['account_id'], ':match_id' => $this->matchId, ':hero_id' => $p['hero_id'], ':position' => $p['player_slot']));
+					if (isset($p['hero_damage'])) {
+						$playerSql = 'INSERT IGNORE INTO `' . DB_TABLE_PREFIX . 'match_player` SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position, kills = :kills, deaths = :deaths, assists = :assists, leaver_status = :leaver_status, gold = :gold, last_hits = :last_hits, denies = :denies, gold_per_min = :gold_per_min, xp_per_min = :xp_per_min, gold_spent = :gold_spent, hero_damage = :hero_damage, tower_damage = :tower_damage, hero_healing = :hero_healing, level = :level';
+						$stmt = $db->prepare($playerSql);
+						$stmt->execute(array(':account_id' => $p['account_id'], ':match_id' => $this->matchId, ':hero_id' => $p['hero_id'], ':position' => $p['player_slot'], ':kills' => $p['kills'], ':deaths' => $p['deaths'], ':assists' => $p['assists'], ':assists' => $p['assists'], ':leaver_status' => $p['leaver_status'], ':gold' => $p['gold'], ':last_hits' => $p['last_hits'], ':denies' => $p['denies'], ':gold_per_min' => $p['gold_per_min'], ':xp_per_min' => $p['xp_per_min'], ':gold_spent' => $p['gold_spent'], ':hero_damage' => $p['hero_damage'], ':tower_damage' => $p['tower_damage'], ':hero_healing' => $p['hero_healing'], ':level' => $p['level']));
+					}
+					else {
+						$playerSql = 'INSERT IGNORE INTO `' . DB_TABLE_PREFIX . 'match_player` SET account_id = :account_id, match_id = :match_id, hero_id = :hero_id, position = :position';
+						$stmt = $db->prepare($playerSql);
+						$stmt->execute(array(':account_id' => $p['account_id'], ':match_id' => $this->matchId, ':hero_id' => $p['hero_id'], ':position' => $p['player_slot']));
+					}
 				}
 			}			
 			$db->commit();
@@ -88,11 +107,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, lobby_type FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, start_time, duration, winner, mode, lobby_type FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -110,15 +129,28 @@ class Match {
 			$this->winner = $row['winner'];
 			$this->mode = $row['mode'];
 			$this->lobbyType = $row['lobby_type'];
+			$this->mmr = $row['mmr'];
+			$this->matchSeqNum = $row['match_seq_num'];
+			$this->towerStatusRadiant = $row['tower_status_radiant'];
+			$this->towerStatusDire = $row['tower_status_dire'];
+			$this->cluster = $row['cluster'];
+			$this->firstBloodTime = $row['first_blood_time'];
+			$this->leagueId = $row['league_id'];
 			
-			$stmt = $db->prepare('SELECT account_id, hero_id, position FROM `' . DB_TABLE_PREFIX . 'match_player` WHERE match_id = ?');
+			$stmt = $db->prepare('SELECT account_id, hero_id, position, kills, deaths, assists, leaver_status, gold, last_hits, denies, gold_per_min, xp_per_min, gold_spent, hero_damage, tower_damage, hero_healing, level FROM `' . DB_TABLE_PREFIX . 'match_player` WHERE match_id = ?');
 			$stmt->execute(array($this->matchId));
 			$this->players = array();
 			
 			if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 				do {
-					list($team, $position) = $this->parsePlayerPosition($row['position']);				
-					$this->players[] = array('account_id' => $row['account_id'], 'hero_id' => $row['hero_id'], 'team' => $team, 'position' => $position);
+					list($team, $position) = $this->parsePlayerPosition($row['position']);
+					
+					$keys = array_keys($row);
+					$playerArray = array();
+					foreach ($keys AS $key) {
+						$playerArray[$key] = $row[$key];
+					}
+					$this->players[] = $playerArray;					
 				} while ($row = $stmt->fetch(PDO::FETCH_ASSOC));
 			}
 			else {
