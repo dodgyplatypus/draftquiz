@@ -10,21 +10,21 @@ $default-space: 0.9375rem;
 
 @mixin dire-background() {
 	@include body-text();
-	background: url('../images/layout/smoke_misty_backdrop.jpg');
+	background: #4c4468;
 
 	&:active, &:focus, &:hover {
 		font-weight: bold;
-		background: #4c4468;
+		background: url('../images/layout/smoke_misty_backdrop.jpg');
 	}
 }
 
 @mixin radiant-background() {
 	@include body-text();
-	background: url('../images/layout/smoke_mist.jpg');
-
+	background-color: #1e3934;
+	
 	&:active, &:focus, &:hover {
 		font-weight: bold;
-		background: #1e3934;
+		background: url('../images/layout/smoke_mist.jpg');
 	}
 }
 
@@ -54,8 +54,14 @@ body {
 }
 
 #score {
-	text-align: center;
+	text-align: right;
 	padding: 2rem;
+	
+	#score-ratio {
+		font-size: 1.6em;
+		text-shadow: 1px 1px 1px #dedede;
+		padding: 0 0.5rem;
+	}
 }
 
 /* CONTENT */
@@ -143,6 +149,10 @@ body {
 			}
 		}
 	}
+}
+
+#result, #button-nextmatch, #button-external-link {
+	text-align: center;
 }
 
 /* FOOTER */

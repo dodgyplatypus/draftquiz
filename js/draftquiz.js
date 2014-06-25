@@ -16,3 +16,8 @@ $(document).on('click', '#button-nextmatch', function() {
 	MatchManager.nextMatch();
 	return false;
 });
+
+$(document).on('click', '#score-reset', function() {
+	MatchManager.resetScore();
+	return false;
+});

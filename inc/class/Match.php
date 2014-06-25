@@ -149,6 +149,8 @@ class Match {
 					$playerArray = array();
 					foreach ($keys AS $key) {
 						$playerArray[$key] = $row[$key];
+						$playerArray['position'] = $position;
+						$playerArray['team'] = $team;
 					}
 					$this->players[] = $playerArray;					
 				} while ($row = $stmt->fetch(PDO::FETCH_ASSOC));

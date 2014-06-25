@@ -16,6 +16,7 @@
  *   init(settings)
  *   guessWinner(guess)
  *   nextMatch()
+ *   resetScore()
  * 
  * Private methods:
  *   getHeroes(callback)
@@ -254,6 +255,9 @@ var MatchManager = (function($) {
 		displayScore();
 	}
 	
+	/**
+	 * Updates the score status to the UI
+	 **/
 	var displayScore = function() {
 		if (localStorage.getItem('scoreTotal') === null) {
 			localStorage.setItem('scoreCorrect', '0')
@@ -261,11 +265,29 @@ var MatchManager = (function($) {
 		}
 		var scoreCorrect = parseInt(localStorage['scoreCorrect']);
 		var scoreTotal = parseInt(localStorage['scoreTotal']);
-		var scoreRatio = Math.round(scoreCorrect / scoreTotal * 100 * 10) / 10;
-		
+		if (scoreTotal > 0) {
+			var scoreRatio = (Math.round(scoreCorrect / scoreTotal * 100 * 10) / 10).toString() + '%';
+		}
+		else {
+			var scoreRatio = '-';
+		}	
 		$('#score-correct').html(scoreCorrect);
 		$('#score-total').html(scoreTotal);
-		$('#score-ratio').html(scoreRatio + '%');
+		$('#score-ratio').html(scoreRatio);
+	}
+	
+	/**
+	 * Resets the score, asks confirmation first
+	 **/
+	var resetScore = function() {
+		if (confirm("Are you sure want to reset the score?") == true) {
+			localStorage.setItem('scoreCorrect', '0')
+			localStorage.setItem('scoreTotal', '0');
+			displayScore();
+		}
+		else {
+			return false;
+		}
 	}
 	
 	/**
@@ -274,6 +296,7 @@ var MatchManager = (function($) {
 	return {
 		init: init,
 		guessWinner: guessWinner,
-		nextMatch: nextMatch
+		nextMatch: nextMatch,
+		resetScore: resetScore
 	};
 }(jQuery));
