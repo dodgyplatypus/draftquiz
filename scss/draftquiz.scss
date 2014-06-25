@@ -63,6 +63,10 @@ body {
 	padding: $default-space;
 	border: 2px solid #333333;
 	
+	&:hover {
+		cursor: pointer;
+	}
+	
 	li {
 		padding-bottom: 0;
 	}
