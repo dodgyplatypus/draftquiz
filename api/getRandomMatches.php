@@ -20,8 +20,13 @@ if (is_array($matches)) {
 			// lets put players in order by position, 
 			// easier to show them in correct order in frontend
 			$index = $p['position'];
-			if ($p['team'] === "r") {
-				$index += 5;
+			if ($p['position'] < 100) {
+				$p['position'] = $p['position'] + 1;
+				$p['team'] = 'r';
+			}
+			else {
+				$p['position'] = $p['position'] - 127;
+				$p['team'] = 'd';
 			}
 			$players[$index] = array('hero' => $p['hero_id'], 'team' => $p['team'], 'position' => $p['position']);			
 		}
