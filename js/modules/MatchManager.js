@@ -200,6 +200,7 @@ var MatchManager = (function($) {
 	var showMatch = function(match) {
 		var radiantHtml = "";
 		var direHtml = "";
+		var heroHtml = "";
 		
 		$.each(match.players, function(i, player) {
 			heroHtml = '<li>\n\
@@ -217,6 +218,9 @@ var MatchManager = (function($) {
 				direHtml += heroHtml;
 			}
 		});
+		
+		direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
+		radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
 
 		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
