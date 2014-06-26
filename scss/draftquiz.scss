@@ -10,21 +10,21 @@ $default-space: 0.9375rem;
 
 @mixin dire-background() {
 	@include body-text();
-	background: #4c4468;
+	background-color: #2a2246;
 
 	&:active, &:focus, &:hover {
 		font-weight: bold;
-		background: url('../images/layout/smoke_misty_backdrop.jpg');
+		background: #3a3256;
 	}
 }
 
 @mixin radiant-background() {
 	@include body-text();
-	background-color: #1e3934;
+	background-color: #1d2722;
 	
 	&:active, &:focus, &:hover {
 		font-weight: bold;
-		background: url('../images/layout/smoke_mist.jpg');
+		background-color: #2d3732;
 	}
 }
 
@@ -62,6 +62,10 @@ body {
 		text-shadow: 1px 1px 1px #dedede;
 		padding: 0 0.5rem;
 	}
+	
+	#score-reset {
+		cursor: pointer;
+	}
 }
 
 /* CONTENT */
@@ -80,7 +84,7 @@ body {
 	button {
 		width: 72px;
 		height: 72px;
-		margin: 0;
+		margin: 7px 0 0 0;
 		padding: 0;
 		box-shadow: 0 0 0.5em #000000;
 	}
@@ -151,8 +155,28 @@ body {
 	}
 }
 
-#result, #button-nextmatch, #button-external-link {
+div.row.result{
 	text-align: center;
+	
+	#result {
+		font-weight: 600;
+		font-size: 1.6em;
+	}
+	
+	#button-nextmatch {
+		cursor: pointer;
+	}
+}
+
+#match-info-details {
+	padding-bottom: 0;
+	font-size: 1.4em;
+	line-height: 1em;
+	text-align: center;
+	
+	#match-mode {
+		font-weight: 600;
+	}
 }
 
 /* FOOTER */

@@ -39,7 +39,21 @@ var MatchManager = (function($) {
 	var canGuess = true;
 	var heroes = [];
 	var matches = [];
-
+	var modes = [	'None', 
+								'All Pick',
+								'Captain\'s Mode',
+								'Random Draft',
+								'Single Draft',
+								'All Random',
+								'Intro',
+								'Diretide',
+								'Reverse Captain\'s Mode',
+								'The Greeviling',
+								'Tutorial',
+								'Mid Only',
+								'Least Played',
+								'New Player Pool',
+								'Compendium Matchmaking'];
 	/**
 	 * Initialize module
 	 * @param {object} settings
@@ -84,7 +98,7 @@ var MatchManager = (function($) {
 					$('#result').html("Wrong");
 					addScore(0);
 				}
-				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '">Dotabuff</a>');
+				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '" target="_blank">Dotabuff</a>');
 			},
 			error: function() {
 				alert("API IS KAPUT! :O");
@@ -224,6 +238,11 @@ var MatchManager = (function($) {
 		radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
 
 		$('#radiant-heroes').html(radiantHtml);
+		
+		// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
+		var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
+		$('#match-info-details #match-mode').html(modes[match.mode]);
+		$('#match-info-details #match-mmr').html(', MMR ' + mmrRange);
 		$('#dire-heroes').html(direHtml);
 	};
 

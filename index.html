@@ -20,7 +20,7 @@
 					<div class="small-12 columns columns-score">
 						<ul class="small-block-grid-2 medium-block-grid-2 large-block-grid-2">
 							<li><img id="logo" src="images/layout/logo.png" alt="Draft Quiz: Guess the winner from draft results" /></li>							
-							<li id="score"><span id="score-correct"></span>/<span id="score-total"></span> <span id="score-ratio"></span> <span id="score-reset">reset</span></li>
+							<li id="score"><span id="score-correct" title="Correct guesses"></span>/<span id="score-total" title="Total guesses"></span> <span id="score-ratio" title="Percents of correct guesses"></span> <span id="score-reset" title="Reset the score, for good!">reset</span></li>
 						</ul>
 					</div>
 				</div>
@@ -30,19 +30,27 @@
 						<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="dire-heroes"> </ul>
 					</div>
 				</div>
-
+				
+				<div class="row match-info">
+					<div class="small-12 columns">
+						<ul class="small-block-grid-1 medium-block-grid-1 large-block-grid-1">
+							<li id="match-info-details"><span id="match-mode"></span><span id="match-mmr" title="MMR range"></span></li>
+						</ul>
+					</div>
+				</div>
+				
 				<div class="row heroes">
 					<div class="small-12 columns vote-radiant">
 						<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="radiant-heroes"> </ul>
 					</div>
 				</div>
 				
-				<div class="row">
+				<div class="row result">
 					<div class="small-12 columns">
 						<ul class="small-block-grid-3 medium-block-grid-3 large-block-grid-3">
+							<li id="button-external-link"></li>
 							<li id="result"></li>
 							<li id="button-nextmatch">Next Match</li>
-							<li id="button-external-link"></li>
 						</ul>
 					</div>
 				</div>
