@@ -204,18 +204,17 @@ var MatchManager = (function($) {
 		var html = '';
 		var i;
 		
-		// title
-		if(data[0].winner === '0') {
-			html += '<h2>Dire victory</h2>';
-		}
-		else {
-			html += '<h2>Radiant victory</h2>';
-		}
-		
 		// start results
 		html += '<div class="row"><div class="small-6 columns">';
 		
 		// radiant table
+		if(data[0].winner === '0') {
+			html += '<h4>Radiant loss</h4>';
+		}
+		else {
+			html += '<h4><strong>Radiant victory</strong></h4>';
+		}
+		
 		html += '<table id="radiant-results">';
 		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
 		for(i = 0; i < 5; i++) {
@@ -234,6 +233,13 @@ var MatchManager = (function($) {
 		html += '</div><div class="small-6 columns">';
 		
 		// dire table
+		if(data[0].winner === '0') {
+			html += '<h4><strong>Dire victory</strong></h4>';
+		}
+		else {
+			html += '<h4>Dire loss</h4>';
+		}
+		
 		html += '<table id="dire-results">';
 		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
 		for(i = 5; i < 10; i++) {
