@@ -27,6 +27,7 @@ class MatchManager {
 		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/V001/?start_at_match_seq_num=' . $maxMatchSeqNum . '&key=' . API_KEY);
 
 		$matches = json_decode($json, true);
+		
 		$matchList = array();
 		// execute queries
 		for($i = 0; $i < count($matches['result']['matches']); $i++) {
@@ -41,7 +42,7 @@ class MatchManager {
 				$matchObject->players = $match['players'];
 				$matchObject->lobbyType = $match['lobby_type'];
 				$matchObject->matchSeqNum = $match['match_seq_num'];
-				if ($matchObject->isValid() === true) {
+				if ($matchObject->isValid(true) === true) {
 					// test if match is already on the database, 
 					// if it is, just go to the next one
 					$testMatch = new Match($match['match_id']);
@@ -59,7 +60,7 @@ class MatchManager {
 		return $matchList;
 	}
 	
-	public function fetchFromApiByPlayerId($playerId, $matchLimit = 25, $mmr = false) {
+	public function fetchFromApiByPlayerId($playerId, $matchLimit = 25, $mmr = false, $debug = true) {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		
 		$playerId = (int) $playerId;
@@ -79,8 +80,11 @@ class MatchManager {
 			$match = new Match($matchesData['result']['matches'][$i]['match_id']);
 			$match->fetchFromApi();
 			$match->mmr = $mmr;
-			if ($match->isValid()) {
+			if ($match->isValid($debug)) {
 				$match->saveToDb();
+				if ($debug === true) {
+					echo "This match is a keeper! {$match->matchId}\n";
+				}
 			}
 		}
 		
