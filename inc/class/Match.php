@@ -176,27 +176,27 @@ class Match {
 	function isValid($debug = false) {
 		if (is_array($this->players)) {
 			if (count($this->players) < 10) {
-				if ($debug) { echo "Match no good, no 10 players in game\n"; }
+				if ($debug) { echo "Match no good, no 10 players in game/{$this->matchId}\n"; }
 				return false;
 			}
 			foreach ($this->players AS $p) {
 				// For some reason leaver_status isn't always provided (bot match, or something?)
 				if (!isset($p['leaver_status']) || $p['leaver_status'] === 1 || $p['hero_id'] === 0) {
-					if ($debug) { echo "Match no good, leaver_status {$p['leaver_status']}, hero_id {$p['hero_id']}\n"; }
+					if ($debug) { echo "Match no good, leaver_status {$p['leaver_status']}, hero_id {$p['hero_id']}/{$this->matchId}\n"; }
 					return false;
 				}
 			}
 		}
 		if ($this->duration < 600) {
-			if ($debug) { echo "Match no good, duration {$this->duration}\n"; }
+			if ($debug) { echo "Match no good, duration {$this->duration}/{$this->matchId}\n"; }
 			return false;
 		}
 		elseif ($this->mode > 5) {
-			if ($debug) { echo "Match no good, mode {$this->mode}\n"; }
+			if ($debug) { echo "Match no good, mode {$this->mode}/{$this->matchId}\n"; }
 			return false;
 		}
-		elseif ($this->lobbyType > 0) {
-			if ($debug) { echo "Match no good, lobbyType {$this->mode}\n"; }
+		elseif ($this->lobbyType != 0 && $this->lobbyType != 7) {
+			if ($debug) { echo "Match no good, lobbyType {$this->lobbyType}/{$this->matchId}\n"; }
 			return false;
 		}
 		else {
