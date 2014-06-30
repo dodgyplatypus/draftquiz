@@ -21,6 +21,7 @@
  * Private methods:
  *   getHeroes(callback)
  *   getMatches(callback)
+ *   parseResult(data)
  *   preloadImages()
  *   showMatch()
  *   updateConfig(settings)
@@ -201,7 +202,6 @@ var MatchManager = (function($) {
 	 * @returns {string}
 	 */
 	var parseResult = function(data) {
-		console.log(data);
 		var html = '';
 		var i;
 		
@@ -218,15 +218,17 @@ var MatchManager = (function($) {
 		
 		html += '<table id="radiant-results">';
 		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
-		for(i = 0; i < 5; i++) {
-			html += '<tr>\n\
-						<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
-						<td>' + data[i].en_name + '</td>\n\
-						<td>' + data[i].level + '</td>\n\
-						<td>' + data[i].kills + '</td>\n\
-						<td>' + data[i].deaths + '</td>\n\
-						<td>' + data[i].assists + '</td>\n\
-					</tr>';
+		for(i = 0; i < 10; i++) {
+			if(data[i].position < 100) {
+				html += '<tr>\n\
+							<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
+							<td>' + data[i].en_name + '</td>\n\
+							<td>' + data[i].level + '</td>\n\
+							<td>' + data[i].kills + '</td>\n\
+							<td>' + data[i].deaths + '</td>\n\
+							<td>' + data[i].assists + '</td>\n\
+						</tr>';
+			}
 		}
 		html += '</table>';
 		
@@ -243,15 +245,17 @@ var MatchManager = (function($) {
 		
 		html += '<table id="dire-results">';
 		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
-		for(i = 5; i < 10; i++) {
-			html += '<tr>\n\
-						<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
-						<td>' + data[i].en_name + '</td>\n\
-						<td>' + data[i].level + '</td>\n\
-						<td>' + data[i].kills + '</td>\n\
-						<td>' + data[i].deaths + '</td>\n\
-						<td>' + data[i].assists + '</td>\n\
-					</tr>';
+		for(i = 0; i < 10; i++) {
+			if(data[i].position > 100) {
+				html += '<tr>\n\
+							<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
+							<td>' + data[i].en_name + '</td>\n\
+							<td>' + data[i].level + '</td>\n\
+							<td>' + data[i].kills + '</td>\n\
+							<td>' + data[i].deaths + '</td>\n\
+							<td>' + data[i].assists + '</td>\n\
+						</tr>';
+			}
 		}
 		html += '</table>';
 		
@@ -301,8 +305,8 @@ var MatchManager = (function($) {
 			}
 		});
 		
-		direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
-		radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
+		//direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
+		//radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
 		
 		// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
 		var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
@@ -355,7 +359,7 @@ var MatchManager = (function($) {
 		var scoreCorrect = parseInt(localStorage['scoreCorrect']);
 		var scoreTotal = parseInt(localStorage['scoreTotal']);
 		if (scoreTotal > 0) {
-			var scoreRatio = (Math.round(scoreCorrect / scoreTotal * 100 * 10) / 10).toString() + '%';
+			var scoreRatio = (scoreCorrect / scoreTotal * 100).toFixed(1) + ' %';
 		}
 		else {
 			var scoreRatio = '-';

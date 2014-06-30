@@ -20,10 +20,11 @@ else {
 	try {		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$stmt = $db->prepare('SELECT m.match_id, m.duration, m.winner, m.mode, h.name, h.en_name, p.position, p.kills, p.deaths, p.assists, p.level'
+				. ', ((p.kills + p.assists) / p.deaths) AS kda'
 				. ' FROM ' . DB_TABLE_PREFIX . 'match AS m, ' . DB_TABLE_PREFIX . 'match_player AS p, ' . DB_TABLE_PREFIX . 'hero AS h'
 				. ' WHERE m.public_id = ? AND m.match_id = p.match_id AND p.hero_id = h.id'
 				. ' GROUP BY m.match_id, p.hero_id'
-				. ' ORDER BY p.position');
+				. ' ORDER BY kda DESC');
 		$stmt->bindParam(1, $publicId, PDO::PARAM_INT);
 		$stmt->execute();
 
