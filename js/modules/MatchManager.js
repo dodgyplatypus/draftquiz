@@ -217,9 +217,10 @@ var MatchManager = (function($) {
 		
 		// radiant table
 		html += '<table id="radiant-results">';
-		html += '<tr><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
 		for(i = 0; i < 5; i++) {
 			html += '<tr>\n\
+						<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
 						<td>' + data[i].en_name + '</td>\n\
 						<td>' + data[i].level + '</td>\n\
 						<td>' + data[i].kills + '</td>\n\
@@ -234,9 +235,10 @@ var MatchManager = (function($) {
 		
 		// dire table
 		html += '<table id="dire-results">';
-		html += '<tr><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
 		for(i = 5; i < 10; i++) {
 			html += '<tr>\n\
+						<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
 						<td>' + data[i].en_name + '</td>\n\
 						<td>' + data[i].level + '</td>\n\
 						<td>' + data[i].kills + '</td>\n\

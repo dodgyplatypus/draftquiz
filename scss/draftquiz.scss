@@ -211,8 +211,16 @@ body {
 	table {
 		width: 100%;
 		
+		.portrait {
+			padding: 0;
+			
+			img {
+				height: 34px;
+			}
+		}
+		
 		.hero {
-			width: 50%;
+			width: 45%;
 		}
 	}
 }
