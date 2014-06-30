@@ -31,7 +31,8 @@
 var MatchManager = (function($) {
 	var config = {
 		numberOfMatchesToGet: 10,
-		timeout: 500
+		timeout: 500,
+		fadeTime: 500
 	};
 
 	var currentMatch;
@@ -108,8 +109,8 @@ var MatchManager = (function($) {
 				alert("API IS KAPUT! :O");
 			},
 			complete: function() {
-				$('#guess-view').hide();
-				$('#result-view').show();
+				$('#guess-view').hide(config.fadeTime);
+				$('#result-view').show(config.fadeTime);
 				return false;
 			}
 		});
@@ -311,8 +312,8 @@ var MatchManager = (function($) {
 		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
 		
-		$('#guess-view').show();
-		$('#result-view').hide();
+		$('#guess-view').show(config.fadeTime);
+		$('#result-view').hide(config.fadeTime);
 	};
 
 	/**
