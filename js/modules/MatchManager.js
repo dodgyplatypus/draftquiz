@@ -21,6 +21,7 @@
  * Private methods:
  *   getHeroes(callback)
  *   getMatches(callback)
+ *   parseResult(data)
  *   preloadImages()
  *   showMatch()
  *   updateConfig(settings)
@@ -354,7 +355,7 @@ var MatchManager = (function($) {
 		var scoreCorrect = parseInt(localStorage['scoreCorrect']);
 		var scoreTotal = parseInt(localStorage['scoreTotal']);
 		if (scoreTotal > 0) {
-			var scoreRatio = (Math.round(scoreCorrect / scoreTotal * 100 * 10) / 10).toString() + '%';
+			var scoreRatio = (scoreCorrect / scoreTotal * 100).toFixed(1) + ' %';
 		}
 		else {
 			var scoreRatio = '-';

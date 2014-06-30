@@ -52,24 +52,48 @@ body {
 }
 
 /* HEADER */
-#logo {
-	display: block;
-	max-height: 8%;
-	margin: $default-space 0;
+
+
+#logo-container {
+	padding-bottom: 0;
+	
+	#logo {
+		display: block;
+		max-height: 8%;
+		margin: $default-space 0;
+	}
 }
 
 #score {
+	padding-right: 0;
+	padding-bottom: 0;
 	text-align: right;
-	padding: 2rem;
+	line-height: 87px;
+	
+	#score-correct {
+		padding: 0 0 0 1rem;
+	}
+	
+	#score-total {
+		padding: 0 1rem 0 0;
+	}
 	
 	#score-ratio {
 		font-size: 1.6em;
 		text-shadow: 1px 1px 1px #dedede;
-		padding: 0 0.5rem;
+		padding: 0 1rem 0 0;
 	}
 	
 	#score-reset {
 		cursor: pointer;
+		margin: 0;
+		padding: 8px 16px;
+		color: #000;
+		background: #bbb;
+		
+		&:hover, &:active {
+			background: #ccc;
+		}
 	}
 }
 
