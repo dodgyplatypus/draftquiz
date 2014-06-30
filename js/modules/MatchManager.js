@@ -230,7 +230,7 @@ var MatchManager = (function($) {
 		html += '</table>';
 		
 		// switch column
-		html += '</div><div class="row"><div class="small-6 columns">';
+		html += '</div><div class="small-6 columns">';
 		
 		// dire table
 		html += '<table id="dire-results">';
@@ -247,7 +247,7 @@ var MatchManager = (function($) {
 		html += '</table>';
 		
 		// end column
-		html += '</div>';
+		html += '</div></div>';
 		
 		return html;
 	};
