@@ -304,8 +304,8 @@ var MatchManager = (function($) {
 			}
 		});
 		
-		direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
-		radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
+		//direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
+		//radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
 		
 		// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
 		var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
