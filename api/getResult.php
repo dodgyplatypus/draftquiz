@@ -19,14 +19,21 @@ elseif ($guess !== "0" && $guess !== "1") {
 else {
 	try {		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-		$stmt = $db->prepare('SELECT match_id, duration, winner, mode FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?');
-		$stmt->execute(array($publicId));
+		$stmt = $db->prepare('SELECT m.match_id, m.duration, m.winner, m.mode, h.name, h.en_name, p.position, p.kills, p.deaths, p.assists, p.level'
+				. ' FROM ' . DB_TABLE_PREFIX . 'match AS m, ' . DB_TABLE_PREFIX . 'match_player AS p, ' . DB_TABLE_PREFIX . 'hero AS h'
+				. ' WHERE m.public_id = ? AND m.match_id = p.match_id AND p.hero_id = h.id'
+				. ' GROUP BY m.match_id, p.hero_id'
+				. ' ORDER BY p.position');
+		$stmt->bindParam(1, $publicId, PDO::PARAM_INT);
+		$stmt->execute();
 
+		$output = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$output = $row;
+			$output[] = $row;
 		}
 	}
 	catch (Exception $e) {
+		die($e);
 		Error::outputError("Failed to fetch result", $e->getMessage(), 1);
 	}
 }

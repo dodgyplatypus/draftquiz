@@ -25,33 +25,41 @@
 					</div>
 				</div>
 				
-				<div class="row heroes">
-					<div class="small-12 columns vote-dire">
-						<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="dire-heroes"> </ul>
-					</div>
-				</div>
-				
-				<div class="row match-info">
+				<div id="guess-view" class="row">
 					<div class="small-12 columns">
-						<ul class="small-block-grid-1 medium-block-grid-1 large-block-grid-1">
-							<li id="match-info-details"><span id="match-mode"></span><span id="match-mmr" title="MMR range"></span></li>
-						</ul>
+						<div class="row heroes">
+							<div class="small-12 columns vote-dire">
+								<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="dire-heroes"> </ul>
+							</div>
+						</div>
+
+						<div class="row match-info">
+							<div class="small-12 columns">
+								<p id="match-info-details"><span id="match-mode"></span><span id="match-mmr" title="MMR range"></span></p>
+							</div>
+						</div>
+
+						<div class="row heroes">
+							<div class="small-12 columns vote-radiant">
+								<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="radiant-heroes"> </ul>
+							</div>
+						</div>
 					</div>
 				</div>
 				
-				<div class="row heroes">
-					<div class="small-12 columns vote-radiant">
-						<ul class="small-block-grid-6 medium-block-grid-6 large-block-grid-6" id="radiant-heroes"> </ul>
-					</div>
-				</div>
-				
-				<div class="row result">
+				<div id="result-view" class="row">
 					<div class="small-12 columns">
-						<ul class="small-block-grid-3 medium-block-grid-3 large-block-grid-3">
-							<li id="button-external-link"></li>
+						<ul id="result-navigation" class="small-block-grid-3 medium-block-grid-3 large-block-grid-3">
+							<li id="button-external-link" class="button secondary"></li>
 							<li id="result"></li>
-							<li id="button-nextmatch">Next Match</li>
+							<li id="button-next-match" class="button">Next match</li>
 						</ul>
+						
+						<div class="row">
+							<div id="result-tables" class="small-12 columns">
+								results
+							</div>
+						</div>
 					</div>
 				</div>
 				

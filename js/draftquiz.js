@@ -12,7 +12,7 @@ $(document).on('click', '.vote-radiant', function() {
 	return false;
 });
 
-$(document).on('click', '#button-nextmatch', function() {
+$(document).on('click', '#button-next-match', function() {
 	MatchManager.nextMatch();
 	return false;
 });

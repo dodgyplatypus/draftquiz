@@ -39,21 +39,24 @@ var MatchManager = (function($) {
 	var canGuess = true;
 	var heroes = [];
 	var matches = [];
-	var modes = [	'None', 
-								'All Pick',
-								'Captain\'s Mode',
-								'Random Draft',
-								'Single Draft',
-								'All Random',
-								'Intro',
-								'Diretide',
-								'Reverse Captain\'s Mode',
-								'The Greeviling',
-								'Tutorial',
-								'Mid Only',
-								'Least Played',
-								'New Player Pool',
-								'Compendium Matchmaking'];
+	var modes = [
+		'None', 
+		'All Pick',
+		'Captain\'s Mode',
+		'Random Draft',
+		'Single Draft',
+		'All Random',
+		'Intro',
+		'Diretide',
+		'Reverse Captain\'s Mode',
+		'The Greeviling',
+		'Tutorial',
+		'Mid Only',
+		'Least Played',
+		'New Player Pool',
+		'Compendium Matchmaking'
+	];
+	
 	/**
 	 * Initialize module
 	 * @param {object} settings
@@ -90,23 +93,23 @@ var MatchManager = (function($) {
 				nocache: (new Date()).getTime()
 			},
 			success: function(data) {
-				if (data.winner === guess.toString()) {
+				if (data[0].winner === guess.toString()) {
 					$('#result').html("Correct!");
 					addScore(1);
 				}
 				else {
-					$('#result').html("Wrong");
+					$('#result').html("Wrong...");
 					addScore(0);
 				}
-				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '" target="_blank">Dotabuff</a>');
+				$('#result-tables').html(parseResult(data));
+				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data[0].match_id + '" target="_blank">View match on Dotabuff</a>');
 			},
 			error: function() {
 				alert("API IS KAPUT! :O");
 			},
 			complete: function() {
-				$('#result').css('visibility', 'visible');
-				$('#button-nextmatch').css('visibility', 'visible');
-				$('#button-external-link').css('visibility', 'visible');
+				$('#guess-view').hide();
+				$('#result-view').show();
 				return false;
 			}
 		});
@@ -176,9 +179,6 @@ var MatchManager = (function($) {
 	 * Shift next match from list and show it
 	 */
 	var nextMatch = function() {
-		$('#button-nextmatch').css('visibility', 'hidden');
-		$('#result').css('visibility', 'hidden');		
-		$('#button-external-link').css('visibility', 'hidden');
 		currentMatch = matches.shift();
 		getMatches();
 		preloadImages();
@@ -192,6 +192,64 @@ var MatchManager = (function($) {
 				nextMatch();
 			}, config.timeout);
 		}
+	};
+	
+	/**
+	 * Parse match results into html
+	 * @param {json} data
+	 * @returns {string}
+	 */
+	var parseResult = function(data) {
+		console.log(data);
+		var html = '';
+		var i;
+		
+		// title
+		if(data[0].winner === '0') {
+			html += '<h2>Dire victory</h2>';
+		}
+		else {
+			html += '<h2>Radiant victory</h2>';
+		}
+		
+		// start results
+		html += '<div class="row"><div class="small-6 columns">';
+		
+		// radiant table
+		html += '<table id="radiant-results">';
+		html += '<tr><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		for(i = 0; i < 5; i++) {
+			html += '<tr>\n\
+						<td>' + data[i].en_name + '</td>\n\
+						<td>' + data[i].level + '</td>\n\
+						<td>' + data[i].kills + '</td>\n\
+						<td>' + data[i].deaths + '</td>\n\
+						<td>' + data[i].assists + '</td>\n\
+					</tr>';
+		}
+		html += '</table>';
+		
+		// switch column
+		html += '</div><div class="row"><div class="small-6 columns">';
+		
+		// dire table
+		html += '<table id="dire-results">';
+		html += '<tr><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		for(i = 5; i < 10; i++) {
+			html += '<tr>\n\
+						<td>' + data[i].en_name + '</td>\n\
+						<td>' + data[i].level + '</td>\n\
+						<td>' + data[i].kills + '</td>\n\
+						<td>' + data[i].deaths + '</td>\n\
+						<td>' + data[i].assists + '</td>\n\
+					</tr>';
+		}
+		html += '</table>';
+		
+		// end column
+		html += '</div>';
+		
+		return html;
 	};
 
 	/**
@@ -236,14 +294,17 @@ var MatchManager = (function($) {
 		
 		direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
 		radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
-
-		$('#radiant-heroes').html(radiantHtml);
 		
 		// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
 		var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
 		$('#match-info-details #match-mode').html(modes[match.mode]);
 		$('#match-info-details #match-mmr').html(', MMR ' + mmrRange);
+
+		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
+		
+		$('#guess-view').show();
+		$('#result-view').hide();
 	};
 
 	/**
