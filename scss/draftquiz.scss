@@ -231,12 +231,14 @@ body {
 				color: #ffffff;
 			}
 		}
+		
+		li#result {
+			font-weight: 600;
+			font-size: 1.6em;
+			color: #000000;
+		}
 	}
 	
-	#result {
-		font-weight: 600;
-		font-size: 1.6em;
-	}
 	
 	#button-next-match {
 		cursor: pointer;
