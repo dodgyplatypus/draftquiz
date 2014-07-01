@@ -217,7 +217,7 @@ var MatchManager = (function($) {
 		}
 		
 		html += '<table id="radiant-results">';
-		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
 			if(data[i].position < 100) {
 				html += '<tr>\n\
@@ -227,6 +227,7 @@ var MatchManager = (function($) {
 							<td>' + data[i].kills + '</td>\n\
 							<td>' + data[i].deaths + '</td>\n\
 							<td>' + data[i].assists + '</td>\n\
+							<td>' + (Math.round(parseFloat(data[i].kda) * 10) / 10).toString() + '</td>\n\
 						</tr>';
 			}
 		}
@@ -244,7 +245,7 @@ var MatchManager = (function($) {
 		}
 		
 		html += '<table id="dire-results">';
-		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th></tr>';
+		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
 			if(data[i].position > 100) {
 				html += '<tr>\n\
@@ -254,6 +255,7 @@ var MatchManager = (function($) {
 							<td>' + data[i].kills + '</td>\n\
 							<td>' + data[i].deaths + '</td>\n\
 							<td>' + data[i].assists + '</td>\n\
+							<td>' + (Math.round(parseFloat(data[i].kda) * 10) / 10).toString() + '</td>\n\
 						</tr>';
 			}
 		}
