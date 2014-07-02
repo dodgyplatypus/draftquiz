@@ -57,6 +57,16 @@ CREATE TABLE `match` (
   `cluster` int(10) unsigned DEFAULT NULL,
   `first_blood_time` int(10) unsigned DEFAULT NULL,
   `league_id` int(10) unsigned DEFAULT '0',
+  `radiant_team_id` int(10) unsigned DEFAULT NULL,
+  `radiant_name` varchar(64) COLLATE utf8_swedish_ci DEFAULT NULL,
+  `radiant_logo` bigint(20) unsigned DEFAULT NULL,
+  `radiant_team_complete` tinyint(4) DEFAULT NULL,
+  `radiant_captain` int(10) unsigned DEFAULT NULL,
+  `dire_team_id` int(10) unsigned DEFAULT NULL,
+  `dire_name` varchar(64) COLLATE utf8_swedish_ci DEFAULT NULL,
+  `dire_logo` bigint(20) unsigned DEFAULT NULL,
+  `dire_team_complete` tinyint(3) unsigned DEFAULT NULL,
+  `dire_captain` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`public_id`),
   UNIQUE KEY `MATCHID_KEY` (`match_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
