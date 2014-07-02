@@ -8,9 +8,10 @@ require_once(INC_PATH . 'class/Match.php');
 require_once(INC_PATH . 'class/MatchManager.php');
 
 $count = isset($_GET['count']) ? (int) $_GET['count'] : 10;
+$competitive = $_GET['type'] === 'c' ? true : false;
 
 $matchManager = new MatchManager();
-$matches = $matchManager->getRandomMatches($count);
+$matches = $matchManager->getRandomMatches($count, $competitive);
 
 $output = array();
 if (is_array($matches)) {
