@@ -85,15 +85,56 @@ class MatchManager {
 				if ($debug === true) {
 					echo "This match is a keeper! {$match->matchId}\n";
 				}
+				$matches[] = $match;
 			}
 		}
 		
 		return $matches;
 	}
 	
-	public function getRandomMatches($count = 10) {
+	public function fetchFromApiByLeagueId($leagueId, $matchLimit = 25, $mmr = false, $debug = true) {
+		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
+		
+		$leagueId = (int) $leagueId;
+		$matchLimit = (int) $matchLimit;
+		
+		if ($leagueId === 0) {
+			throw new Exception("No leagueId given, can't fetch matches");
+		}
+		
+		// list of matches
+		$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?league_id=' . $leagueId . '&matches_requested=' . $matchLimit . '&key=' . API_KEY);
+		
+		$matchesData = json_decode($json, true);
+		
+		$matches = array();
+		for($i = 0; $i < count($matchesData['result']['matches']); $i++) {
+			$match = new Match($matchesData['result']['matches'][$i]['match_id']);
+			$match->fetchFromApi();
+			$match->mmr = $mmr;
+			if ($match->isValid($debug)) {
+				$match->saveToDb();
+				if ($debug === true) {
+					echo "This match is a keeper! {$match->matchId}\n";
+				}
+				$matches[] = $match;
+			}
+		}
+		
+		return $matches;
+	}
+	
+	public function getRandomMatches($count = 10, $competitive = false) {
 		$count = (int) $count;
 		$matches = array();
+		
+		$competitiveSql = '';
+		if ($competitive) {
+			$competitiveSql = 'AND league_id > 0';
+		}
+		else {
+			$competitiveSql = 'AND league_id = 0';
+		}
 		
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
@@ -103,7 +144,7 @@ class MatchManager {
 			SELECT r1.public_id
 				FROM `' . DB_TABLE_PREFIX . 'match` AS r1 JOIN
 						 (SELECT (RAND() * (SELECT MAX(public_id) FROM `' . DB_TABLE_PREFIX . 'match`)) AS public_id) AS r2
-				WHERE r1.public_id >= r2.public_id
+				WHERE r1.public_id >= r2.public_id ' . $competitiveSql . '
 				ORDER BY r1.public_id ASC
 				LIMIT ' . $count);
 			
@@ -111,7 +152,13 @@ class MatchManager {
 			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				$match = new Match();
 				$match->loadFromDb(false, $row[0]);
-				$matches[] = $match;
+				// sql returns 10 sequental matches from random position, all games are not necessarily competitive even thou first is
+				if ($competitive && $match->leagueId > 0) {
+					$matches[] = $match;
+				}
+				elseif ($competitive == false && $match->leagueId == 0) {
+					$matches[] = $match;
+				}
 			}
 			return $matches;
 		}
