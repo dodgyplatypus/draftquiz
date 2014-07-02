@@ -22,6 +22,16 @@ class Match {
 	public $cluster;
 	public $firstBloodTime;
 	public $leagueId;
+	public $radiantTeamId;
+	public $radiantName;
+	public $radiantLogo;
+	public $radiantTeamComplete;
+	public $radiantCaptain;
+	public $direTeamId;
+	public $direName;
+	public $direLogo;
+	public $direTeamComplete;
+	public $direCaptain;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -56,6 +66,29 @@ class Match {
 			$this->cluster = $matchData['result']['cluster'];
 			$this->firstBloodTime = $matchData['result']['first_blood_time'];
 			$this->leagueId = $matchData['result']['leagueid'];
+			
+			// is competitive
+			if (isset($matchData['result']['radiant_team_id'])) {
+				$this->radiantTeamId = $matchData['result']['radiant_team_id'];
+				$this->radiantName = $matchData['result']['radiant_name'];
+				$this->radiantLogo = $matchData['result']['radiant_logo'];
+				$this->radiantTeamComplete = $matchData['result']['radiant_team_complete'];
+				
+				// all games dont provide captain data
+				if (isset($matchData['result']['radiant_captain'])) {
+					$this->radiantCaptain = $matchData['result']['radiant_captain'];
+				}
+				
+				$this->direTeamId = $matchData['result']['dire_team_id'];
+				$this->direName = $matchData['result']['dire_name'];
+				$this->direLogo = $matchData['result']['dire_logo'];
+				$this->direTeamComplete = $matchData['result']['dire_team_complete'];
+				
+				// all games dont provide captain data
+				if (isset($matchData['result']['dire_captain'])) {
+					$this->direCaptain = $matchData['result']['dire_captain'];
+				}
+			}
 		}
 	}
 	
@@ -63,11 +96,11 @@ class Match {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$db->beginTransaction();
 		$sql = 'INSERT INTO `' . DB_TABLE_PREFIX . 'match` SET 
-			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id
-			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id';
+			match_id = :id, start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id, radiant_team_id = :radiant_team_id, radiant_name = :radiant_name, radiant_logo = :radiant_logo, radiant_team_complete = :radiant_team_complete, radiant_captain = :radiant_captain, dire_team_id = :dire_team_id, dire_name = :dire_name, dire_logo = :dire_logo, dire_team_complete = :dire_team_complete, dire_captain = :dire_captain
+			ON DUPLICATE KEY UPDATE start_time = :start_time, duration = :duration, winner = :winner, mode = :mode, lobby_type = :lobby_type, match_seq_num = :match_seq_num, mmr = :mmr, tower_status_radiant = :tower_status_radiant, tower_status_dire = :tower_status_dire, barracks_status_radiant = :barracks_status_radiant, barracks_status_dire = :barracks_status_dire, cluster = :cluster, first_blood_time = :first_blood_time, league_id = :league_id, radiant_team_id = :radiant_team_id, radiant_name = :radiant_name, radiant_logo = :radiant_logo, radiant_team_complete = :radiant_team_complete, radiant_captain = :radiant_captain, dire_team_id = :dire_team_id, dire_name = :dire_name, dire_logo = :dire_logo, dire_team_complete = :dire_team_complete, dire_captain = :dire_captain';
 		try {
 			$stmt = $db->prepare($sql);
-			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum, ':mmr' => $this->mmr, ':tower_status_radiant' => $this->towerStatusRadiant, ':tower_status_dire' => $this->towerStatusDire, ':barracks_status_radiant' => $this->barracksStatusRadiant, ':barracks_status_dire' => $this->barracksStatusDire, ':cluster' => $this->cluster, ':first_blood_time' => $this->firstBloodTime, ':league_id' => $this->leagueId));
+			$stmt->execute(array(':id' => $this->matchId, ':start_time' => $this->startTime, ':duration' => $this->duration, ':winner' => $this->winner, ':mode' => $this->mode, ':lobby_type' => $this->lobbyType, ':match_seq_num' => $this->matchSeqNum, ':mmr' => $this->mmr, ':tower_status_radiant' => $this->towerStatusRadiant, ':tower_status_dire' => $this->towerStatusDire, ':barracks_status_radiant' => $this->barracksStatusRadiant, ':barracks_status_dire' => $this->barracksStatusDire, ':cluster' => $this->cluster, ':first_blood_time' => $this->firstBloodTime, ':league_id' => $this->leagueId, ':radiant_team_id' => $this->radiantTeamId, ':radiant_name' => $this->radiantName, ':radiant_logo' => $this->radiantLogo, ':radiant_team_complete' => $this->radiantTeamComplete, ':radiant_captain' => $this->radiantCaptain, ':dire_team_id' => $this->direTeamId, ':dire_name' => $this->direName, ':dire_logo' => $this->direLogo, ':dire_team_complete' => $this->direTeamComplete, ':dire_captain' => $this->direCaptain));
 			$this->publicId = $db->lastInsertId();
 			
 			if (is_array($this->players)) {
@@ -107,11 +140,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -136,6 +169,18 @@ class Match {
 			$this->cluster = $row['cluster'];
 			$this->firstBloodTime = $row['first_blood_time'];
 			$this->leagueId = $row['league_id'];
+			
+			$this->radiantTeamId = $row['radiant_team_id'];
+			$this->radiantName = $row['radiant_name'];
+			$this->radiantLogo = $row['radiant_logo'];
+			$this->radiantTeamComplete = $row['radiant_team_complete'];
+			$this->radiantCaptain = $row['radiant_captain'];
+			
+			$this->direTeamId = $row['dire_team_id'];
+			$this->direName = $row['dire_name'];
+			$this->direLogo = $row['dire_logo'];
+			$this->direTeamComplete = $row['dire_team_complete'];
+			$this->direCaptain = $row['dire_captain'];
 			
 			$stmt = $db->prepare('SELECT account_id, hero_id, position, kills, deaths, assists, leaver_status, gold, last_hits, denies, gold_per_min, xp_per_min, gold_spent, hero_damage, tower_damage, hero_healing, level FROM `' . DB_TABLE_PREFIX . 'match_player` WHERE match_id = ?');
 			$stmt->execute(array($this->matchId));
@@ -191,16 +236,17 @@ class Match {
 			if ($debug) { echo "Match no good, duration {$this->duration}/{$this->matchId}\n"; }
 			return false;
 		}
-		elseif ($this->mode > 5) {
-			if ($debug) { echo "Match no good, mode {$this->mode}/{$this->matchId}\n"; }
-			return false;
+		if ($this->leagueId == 0) {
+			if ($this->mode > 5) {
+				if ($debug) { echo "Match no good, mode {$this->mode}/{$this->matchId}\n"; }
+				return false;
+			}
+			elseif ($this->lobbyType != 0 && $this->lobbyType != 7) {
+				if ($debug) { echo "Match no good, lobbyType {$this->lobbyType}/{$this->matchId}\n"; }
+				return false;
+			}
 		}
-		elseif ($this->lobbyType != 0 && $this->lobbyType != 7) {
-			if ($debug) { echo "Match no good, lobbyType {$this->lobbyType}/{$this->matchId}\n"; }
-			return false;
-		}
-		else {
-			return true;
-		}
+		
+		return true;
 	}
 }
