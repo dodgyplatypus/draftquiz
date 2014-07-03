@@ -68,7 +68,7 @@ class Match {
 			$this->leagueId = $matchData['result']['leagueid'];
 			
 			// is competitive
-			if (isset($matchData['result']['radiant_team_id'])) {
+			if (isset($matchData['result']['radiant_team_id']) && isset($matchData['result']['dire_team_id'])) {
 				$this->radiantTeamId = $matchData['result']['radiant_team_id'];
 				$this->radiantName = $matchData['result']['radiant_name'];
 				$this->radiantLogo = $matchData['result']['radiant_logo'];
