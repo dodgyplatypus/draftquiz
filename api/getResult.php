@@ -30,7 +30,20 @@ else {
 
 		$output = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$output[] = $row;
+			if (!isset($output['match_id'])) {
+				$output['match_id'] = $row['match_id'];
+				$output['duration'] = $row['duration'];
+				$output['winner'] = $row['winner'];
+				$output['mode'] = $row['mode'];
+			}
+			$output[] = array('name' => $row['name'],
+												'en_name' => $row['en_name'],
+												'position' => $row['position'],
+												'kills' => $row['kills'],
+												'deaths' => $row['deaths'],
+												'assists' => $row['assists'],
+												'level' => $row['level'],
+												'kda' => $row['kda']);
 		}
 	}
 	catch (Exception $e) {
