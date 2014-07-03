@@ -56,7 +56,11 @@ var MatchManager = (function($) {
 		'Mid Only',
 		'Least Played',
 		'New Player Pool',
-		'Compendium Matchmaking'
+		'Compendium Matchmaking',
+		'Custom',
+		'Captains Draft',
+		'New Bloom',
+		'Ability Draft'
 	];
 	
 	/**
@@ -95,7 +99,7 @@ var MatchManager = (function($) {
 				nocache: (new Date()).getTime()
 			},
 			success: function(data) {
-				if (data[0].winner === guess.toString()) {
+				if (data.winner === guess.toString()) {
 					$('#result').html("Correct!");
 					addScore(1);
 				}
@@ -104,7 +108,7 @@ var MatchManager = (function($) {
 					addScore(0);
 				}
 				$('#result-tables').html(parseResult(data));
-				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data[0].match_id + '" target="_blank">View match on Dotabuff</a>');
+				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '" target="_blank">View match on Dotabuff</a>');
 			},
 			error: function() {
 				alert("API IS KAPUT! :O");
@@ -159,7 +163,7 @@ var MatchManager = (function($) {
 				count: config.numberOfMatchesToGet,
 				nocache: (new Date()).getTime()
 			},
-			url: 'api/getRandomMatches.php',
+			url: 'api/getRandomMatches.php?type=c',
 			success: function(data) {
 				$.each(data, function(i, match) {
 					matches.push(match);
@@ -209,7 +213,7 @@ var MatchManager = (function($) {
 		html += '<div class="row"><div class="small-6 columns">';
 		
 		// radiant table
-		if(data[0].winner === '0') {
+		if(data.winner === '0') {
 			html += '<h4>Radiant loss</h4>';
 		}
 		else {
@@ -237,7 +241,7 @@ var MatchManager = (function($) {
 		html += '</div><div class="small-6 columns">';
 		
 		// dire table
-		if(data[0].winner === '0') {
+		if(data.winner === '0') {
 			html += '<h4><strong>Dire victory</strong></h4>';
 		}
 		else {
@@ -310,11 +314,19 @@ var MatchManager = (function($) {
 		//direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
 		//radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
 		
-		// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
-		var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
 		$('#match-info-details #match-mode').html(modes[match.mode]);
-		$('#match-info-details #match-mmr').html(', MMR ' + mmrRange);
-
+		if (match.mode === '1') {
+			// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
+			var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
+			$('#match-info-details #match-mmr').show();
+			$('#match-info-details #match-mmr').html(', MMR ' + mmrRange);
+		}
+		// 2 is captains mode, and 16 is captains draft
+		else if (match.mode === '2' || match.mode === '16') {
+			$('#match-info-details #match-mmr').html(', competitive match');
+		}
+		
+		
 		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
 		
