@@ -130,23 +130,20 @@ class MatchManager {
 		
 		$competitiveSql = '';
 		if ($competitive) {
-			$competitiveSql = 'AND league_id > 0';
+			$competitiveSql = 'league_id > 0';
 		}
 		else {
-			$competitiveSql = 'AND league_id = 0';
+			$competitiveSql = 'league_id = 0';
 		}
 		
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
+			
 			// get 10 random IDs from matches-table
-			// http://jan.kneschke.de/projects/mysql/order-by-rand/
+			// modified from http://stackoverflow.com/questions/18943417/how-to-quickly-select-3-random-records-from-a-30k-mysql-table-with-a-where-filte
 			$stmt = $db->prepare('
-			SELECT r1.public_id
-				FROM `' . DB_TABLE_PREFIX . 'match` AS r1 JOIN
-						 (SELECT (RAND() * (SELECT MAX(public_id) FROM `' . DB_TABLE_PREFIX . 'match`)) AS public_id) AS r2
-				WHERE r1.public_id >= r2.public_id ' . $competitiveSql . '
-				ORDER BY r1.public_id ASC
-				LIMIT ' . $count);
+			SELECT m.public_id FROM `' . DB_TABLE_PREFIX . 'match` AS m
+			WHERE ((' . $competitiveSql . ') AND RAND() < 6 * ' . $count . '/(SELECT COUNT(*) FROM `' . DB_TABLE_PREFIX . 'match`)) LIMIT ' . $count);
 			
 			$stmt->execute(array($count));
 			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
