@@ -209,15 +209,22 @@ var MatchManager = (function($) {
 		var html = '';
 		var i;
 		
+		var radiantTeamName = 'Radiant';
+		var direTeamName = 'Dire';
+		if (data.league_id !== '0') {
+			radiantTeamName = data.radiant_name;
+			direTeamName = data.dire_name;
+		}
+		
 		// start results
 		html += '<div class="row"><div class="small-6 columns">';
 		
 		// radiant table
 		if(data.winner === '0') {
-			html += '<h4>Radiant loss</h4>';
+			html += '<h4>' + radiantTeamName + ' loss</h4>';
 		}
 		else {
-			html += '<h4><strong>Radiant victory</strong></h4>';
+			html += '<h4><strong>' + radiantTeamName + ' victory</strong></h4>';
 		}
 		
 		html += '<table id="radiant-results">';
@@ -242,10 +249,10 @@ var MatchManager = (function($) {
 		
 		// dire table
 		if(data.winner === '0') {
-			html += '<h4><strong>Dire victory</strong></h4>';
+			html += '<h4><strong>' + direTeamName + ' victory</strong></h4>';
 		}
 		else {
-			html += '<h4>Dire loss</h4>';
+			html += '<h4>' + direTeamName + ' loss</h4>';
 		}
 		
 		html += '<table id="dire-results">';
@@ -320,10 +327,12 @@ var MatchManager = (function($) {
 			var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
 			$('#match-info-details #match-mmr').show();
 			$('#match-info-details #match-mmr').html(', MMR ' + mmrRange);
+			$('#match-info-details #match-mmr').attr('title', 'MMR range');
 		}
 		// 2 is captains mode, and 16 is captains draft
 		else if (match.mode === '2' || match.mode === '16') {
-			$('#match-info-details #match-mmr').html(', competitive match');
+			$('#match-info-details #match-mmr').html(', competitive match (<a href="http://wiki.teamliquid.net/dota2/Version_' + match.version + '" target="_new">' + match.version + '</a>)');
+			$('#match-info-details #match-mmr').attr('title', '');
 		}
 		
 		

@@ -102,6 +102,26 @@ CREATE TABLE `match_player` (
   CONSTRAINT `match_foreign_key` FOREIGN KEY (`match_id`) REFERENCES `match` (`match_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
+create table `patch` (
+	`version` varchar (10),
+	`released` timestamp 
+); 
+insert into `patch` (`version`, `released`) values('6.77b','2013-01-11 00:00:00');
+insert into `patch` (`version`, `released`) values('6.77c','2013-03-16 00:00:00');
+insert into `patch` (`version`, `released`) values('6.78','2013-05-30 00:00:00');
+insert into `patch` (`version`, `released`) values('6.78b','2013-06-03 00:00:00');
+insert into `patch` (`version`, `released`) values('6.78c','2013-06-30 00:00:00');
+insert into `patch` (`version`, `released`) values('6.79','2013-10-21 00:00:00');
+insert into `patch` (`version`, `released`) values('6.79b','2013-11-27 00:00:00');
+insert into `patch` (`version`, `released`) values('6.79c','2013-12-11 00:00:00');
+insert into `patch` (`version`, `released`) values('6.79d','2014-01-07 00:00:00');
+insert into `patch` (`version`, `released`) values('6.79e','2014-01-12 00:00:00');
+insert into `patch` (`version`, `released`) values('6.80','2014-01-27 00:00:00');
+insert into `patch` (`version`, `released`) values('6.80b','2014-03-02 00:00:00');
+insert into `patch` (`version`, `released`) values('6.80c','2014-03-03 00:00:00');
+insert into `patch` (`version`, `released`) values('6.81','2014-04-29 00:00:00');
+insert into `patch` (`version`, `released`) values('6.81b','2014-06-02 00:00:00');
+
 --
 -- Constraints for dumped tables
 --

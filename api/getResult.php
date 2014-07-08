@@ -19,7 +19,7 @@ elseif ($guess !== "0" && $guess !== "1") {
 else {
 	try {		
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-		$stmt = $db->prepare('SELECT m.match_id, m.duration, m.winner, m.mode, h.name, h.en_name, p.position, p.kills, p.deaths, p.assists, p.level'
+		$stmt = $db->prepare('SELECT m.match_id, m.duration, m.winner, m.mode, m.league_id, m.radiant_name, m.dire_name, h.name, h.en_name, p.position, p.kills, p.deaths, p.assists, p.level'
 				. ', IF(p.deaths=0, (p.kills + p.assists), ((p.kills + p.assists) / p.deaths)) AS kda'
 				. ' FROM ' . DB_TABLE_PREFIX . 'match AS m, ' . DB_TABLE_PREFIX . 'match_player AS p, ' . DB_TABLE_PREFIX . 'hero AS h'
 				. ' WHERE m.public_id = ? AND m.match_id = p.match_id AND p.hero_id = h.id'
@@ -35,6 +35,9 @@ else {
 				$output['duration'] = $row['duration'];
 				$output['winner'] = $row['winner'];
 				$output['mode'] = $row['mode'];
+				$output['league_id'] = $row['league_id'];
+				$output['radiant_name'] = $row['radiant_name'];
+				$output['dire_name'] = $row['dire_name'];
 			}
 			$output[] = array('name' => $row['name'],
 												'en_name' => $row['en_name'],

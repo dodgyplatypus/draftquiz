@@ -32,6 +32,7 @@ class Match {
 	public $direLogo;
 	public $direTeamComplete;
 	public $direCaptain;
+	public $version;
 	
 	public function __construct() {
 		$args = func_get_args();
@@ -140,11 +141,11 @@ class Match {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 			if ($this->matchId) {
-				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain, (SELECT version FROM `' . DB_TABLE_PREFIX . 'patch` WHERE UNIX_TIMESTAMP(released) < start_time ORDER BY released DESC LIMIT 1) AS version FROM `' . DB_TABLE_PREFIX . 'match` WHERE match_id = ?';
 				$searchId = $this->matchId;
 			} 
 			elseif ($this->publicId) {
-				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
+				$matchSql = 'SELECT public_id, match_id, match_seq_num, start_time, duration, winner, mode, lobby_type, mmr, tower_status_radiant, tower_status_dire, barracks_status_radiant, barracks_status_dire, cluster, first_blood_time, league_id, radiant_team_id, radiant_name, radiant_logo, radiant_team_complete, radiant_captain, dire_team_id, dire_name, dire_logo, dire_team_complete, dire_captain, (SELECT version FROM `' . DB_TABLE_PREFIX . 'patch` WHERE UNIX_TIMESTAMP(released) < start_time ORDER BY released DESC LIMIT 1) AS version FROM `' . DB_TABLE_PREFIX . 'match` WHERE public_id = ?';
 				$searchId = $this->publicId;
 			}
 			else {
@@ -181,6 +182,8 @@ class Match {
 			$this->direLogo = $row['dire_logo'];
 			$this->direTeamComplete = $row['dire_team_complete'];
 			$this->direCaptain = $row['dire_captain'];
+			
+			$this->version = $row['version'];
 			
 			$stmt = $db->prepare('SELECT account_id, hero_id, position, kills, deaths, assists, leaver_status, gold, last_hits, denies, gold_per_min, xp_per_min, gold_spent, hero_damage, tower_damage, hero_healing, level FROM `' . DB_TABLE_PREFIX . 'match_player` WHERE match_id = ?');
 			$stmt->execute(array($this->matchId));

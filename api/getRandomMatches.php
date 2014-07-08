@@ -26,7 +26,7 @@ if (is_array($matches)) {
 			}
 			$players[$index] = array('hero' => $p['hero_id'], 'team' => $p['team'], 'position' => $p['position']);			
 		}
-		$output[] = array('publicId' => $m->publicId, 'mmr' => $m->mmr, 'mode' => $m->mode, 'players' => $players);
+		$output[] = array('publicId' => $m->publicId, 'mmr' => $m->mmr, 'mode' => $m->mode, 'version' => $m->version, 'players' => $players);
 	}
 }
 
