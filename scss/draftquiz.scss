@@ -85,7 +85,7 @@ body {
 		padding: 0 1rem 0 0;
 	}
 	
-	#score-reset {
+	#button-settings {
 		cursor: pointer;
 		margin: 0;
 		padding: 8px 16px;
@@ -257,6 +257,17 @@ body {
 		
 		.hero {
 			white-space: nowrap;
+		}
+	}
+}
+
+#settings-view {
+	display: none;
+	
+	#settings-row {		
+		li {
+			display: table-cell;
+			vertical-align: middle;
 		}
 	}
 }

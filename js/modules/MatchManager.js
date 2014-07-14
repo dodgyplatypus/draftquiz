@@ -17,6 +17,8 @@
  *   guessWinner(guess)
  *   nextMatch()
  *   resetScore()
+ *   updateConfig(settings)
+ *   clearMatchCache()
  * 
  * Private methods:
  *   getHeroes(callback)
@@ -24,7 +26,6 @@
  *   parseResult(data)
  *   preloadImages()
  *   showMatch()
- *   updateConfig(settings)
  *   addScore(correct)
  *   displayScore()
  */
@@ -33,7 +34,8 @@ var MatchManager = (function($) {
 	var config = {
 		numberOfMatchesToGet: 10,
 		timeout: 500,
-		fadeTime: 500
+		fadeTime: 500,
+		matchType: 'c' // c = competitive, p = public, b = both
 	};
 
 	var currentMatch;
@@ -67,14 +69,20 @@ var MatchManager = (function($) {
 	 * Initialize module
 	 * @param {object} settings
 	 */
-	var init = function(settings) {
-		updateConfig(settings);
+	var init = function(settings) {		
+		if (typeof(settings) === 'undefined' && localStorage.getItem('config') !== null) {
+			updateConfig(JSON.parse(localStorage.getItem('config')));
+		}
+		else {
+			updateConfig(settings);
+		}
 		displayScore();
 		getHeroes(function() {
 			getMatches(function() {
 				nextMatch();
 			});
 		});
+		return config;
 	};
 
 	/**
@@ -163,7 +171,7 @@ var MatchManager = (function($) {
 				count: config.numberOfMatchesToGet,
 				nocache: (new Date()).getTime()
 			},
-			url: 'api/getRandomMatches.php?type=c',
+			url: 'api/getRandomMatches.php?type=' + config['matchType'],
 			success: function(data) {
 				$.each(data, function(i, match) {
 					matches.push(match);
@@ -335,7 +343,6 @@ var MatchManager = (function($) {
 			$('#match-info-details #match-mmr').attr('title', '');
 		}
 		
-		
 		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
 		
@@ -353,6 +360,7 @@ var MatchManager = (function($) {
 				config[key] = settings[key];
 			}
 		}
+		localStorage.setItem('config', JSON.stringify(config));
 	};
 	
 	/**
@@ -362,8 +370,8 @@ var MatchManager = (function($) {
 	 */
 	var addScore = function(correct) {
 		if (localStorage.getItem('scoreTotal') === null) {
-			localStorage.setItem('scoreCorrect', '0')
-			localStorage.setItem('scoreTotal', '0')
+			localStorage.setItem('scoreCorrect', '0');
+			localStorage.setItem('scoreTotal', '0');
 		}
 		localStorage['scoreCorrect'] = parseInt(localStorage['scoreCorrect']) + correct;
 		localStorage['scoreTotal'] = parseInt(localStorage['scoreTotal']) + 1;
@@ -407,12 +415,27 @@ var MatchManager = (function($) {
 	}
 	
 	/**
+	 * Clears the Matches -array (cache)
+	 * Populates the array with fresh games
+	 * Useful when match type setting has changed
+	 **/
+	var clearMatchCache = function() {
+		matches = [];
+		getMatches(function() {
+			return true;
+		});
+		return false;
+	}
+	
+	/**
 	 * Return interface
 	 */
 	return {
 		init: init,
 		guessWinner: guessWinner,
 		nextMatch: nextMatch,
-		resetScore: resetScore
+		resetScore: resetScore,
+		updateConfig: updateConfig,
+		clearMatchCache: clearMatchCache
 	};
 }(jQuery));
