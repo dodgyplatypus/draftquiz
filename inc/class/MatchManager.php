@@ -124,16 +124,19 @@ class MatchManager {
 		return $matches;
 	}
 	
-	public function getRandomMatches($count = 10, $competitive = false) {
+	public function getRandomMatches($count = 10, $matchType = 'b') {
 		$count = (int) $count;
 		$matches = array();
 		
-		$competitiveSql = '';
-		if ($competitive) {
-			$competitiveSql = 'league_id > 0';
+		$matchTypeSql = '';
+		if ($matchType === 'c') {
+			$matchTypeSql = 'league_id > 0';
+		}
+		elseif ($matchType === 'p') {
+			$matchTypeSql = 'league_id = 0';
 		}
 		else {
-			$competitiveSql = 'league_id = 0';
+			$matchTypeSql = '1 = 1';
 		}
 		
 		try {
@@ -143,17 +146,20 @@ class MatchManager {
 			// modified from http://stackoverflow.com/questions/18943417/how-to-quickly-select-3-random-records-from-a-30k-mysql-table-with-a-where-filte
 			$stmt = $db->prepare('
 			SELECT m.public_id FROM `' . DB_TABLE_PREFIX . 'match` AS m
-			WHERE ((' . $competitiveSql . ') AND RAND() < 6 * ' . $count . '/(SELECT COUNT(*) FROM `' . DB_TABLE_PREFIX . 'match`)) LIMIT ' . $count);
+			WHERE ((' . $matchTypeSql . ') AND RAND() < 6 * ' . $count . '/(SELECT COUNT(*) FROM `' . DB_TABLE_PREFIX . 'match`)) LIMIT ' . $count);
 			
 			$stmt->execute(array($count));
 			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				$match = new Match();
 				$match->loadFromDb(false, $row[0]);
 				// sql returns 10 sequental matches from random position, all games are not necessarily competitive even thou first is
-				if ($competitive && $match->leagueId > 0) {
+				if ($matchType === 'c' && $match->leagueId > 0) {
 					$matches[] = $match;
 				}
-				elseif ($competitive == false && $match->leagueId == 0) {
+				elseif ($matchType === 'p' && $match->leagueId == 0) {
+					$matches[] = $match;
+				}
+				elseif ($matchType === 'b') {
 					$matches[] = $match;
 				}
 			}
