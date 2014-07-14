@@ -1,5 +1,16 @@
+var config;
+
 $(document).ready(function() {
-	MatchManager.init();
+	config = MatchManager.init();
+	if (config['matchType'] === 'c') {
+		$('#select-match-type').html('Competitive');
+	}
+	else if (config['matchType'] === 'p') {
+		$('#select-match-type').html('Public');
+	}
+	else if (config['matchType'] === 'b') {
+		$('#select-match-type').html('Both');
+	}
 });
 
 $(document).on('click', '.vote-dire', function() {
@@ -14,6 +25,38 @@ $(document).on('click', '.vote-radiant', function() {
 
 $(document).on('click', '#button-next-match', function() {
 	MatchManager.nextMatch();
+	return false;
+});
+
+$(document).on('click', '#select-match-type', function() {
+	var b = $('#select-match-type');
+	if (b.html() == 'Competitive') {
+		b.html('Both');
+		MatchManager.updateConfig({'matchType': 'b'});
+	}
+	else if (b.html() == 'Both') {
+		b.html('Public');
+		MatchManager.updateConfig({'matchType': 'p'});
+	}
+	else if (b.html() == 'Public') {
+		b.html('Competitive');
+		MatchManager.updateConfig({'matchType': 'c'});
+	}
+	return false;
+});
+
+$(document).on('click', '#button-settings', function() {
+	$('#guess-view').hide(500);
+	$('#result-view').hide(500);
+	$('#settings-view').show(500);
+	return false;
+});
+
+$(document).on('click', '#button-save-settings', function() {
+	MatchManager.clearMatchCache();
+	MatchManager.nextMatch();
+	$('#settings-view').hide(500);
+	$('#guess-view').show(500);
 	return false;
 });
 
