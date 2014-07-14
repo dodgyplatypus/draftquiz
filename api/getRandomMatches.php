@@ -8,10 +8,10 @@ require_once(INC_PATH . 'class/Match.php');
 require_once(INC_PATH . 'class/MatchManager.php');
 
 $count = isset($_GET['count']) ? (int) $_GET['count'] : 10;
-$competitive = $_GET['type'] === 'c' ? true : false;
+$matchType = $_GET['type'] === 'c' || $_GET['type'] === 'b' || $_GET['type'] === 'p' ? $_GET['type'] : 'b';
 
 $matchManager = new MatchManager();
-$matches = $matchManager->getRandomMatches($count, $competitive);
+$matches = $matchManager->getRandomMatches($count, $matchType);
 
 $output = array();
 if (is_array($matches)) {
@@ -29,6 +29,8 @@ if (is_array($matches)) {
 		$output[] = array('publicId' => $m->publicId, 'mmr' => $m->mmr, 'mode' => $m->mode, 'version' => $m->version, 'players' => $players);
 	}
 }
+
+shuffle($output);
 
 header('Content-Type: application/json');
 echo json_encode($output);
