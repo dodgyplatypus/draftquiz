@@ -108,13 +108,23 @@ var MatchManager = (function($) {
 			},
 			success: function(data) {
 				if (data.winner === guess.toString()) {
-					$('#result').html("Correct!");
+					$('#result').html('Correct');
+					$('#result').attr('class', 'result-correct');
 					addScore(1);
 				}
 				else {
-					$('#result').html("Wrong...");
+					$('#result').html("Wrong");
+					$('#result').attr('class', 'result-wrong');
 					addScore(0);
 				}
+				
+				if (guess.toString() === '0') {
+					$('#result-guess').html('Dire');
+				}
+				else if (guess.toString() === '1') {
+					$('#result-guess').html('Radiant');
+				} 
+				
 				$('#result-tables').html(parseResult(data));
 				$('#button-external-link').html('<a href="http://www.dotabuff.com/matches/' + data.match_id + '" target="_blank">View match on Dotabuff</a>');
 			},
@@ -236,7 +246,7 @@ var MatchManager = (function($) {
 		}
 		
 		html += '<table id="radiant-results">';
-		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
+		html += '<tr><th class="faction">Radiant</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
 			if(data[i].position < 100) {
 				html += '<tr>\n\
@@ -264,7 +274,7 @@ var MatchManager = (function($) {
 		}
 		
 		html += '<table id="dire-results">';
-		html += '<tr><th>&nbsp;</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
+		html += '<tr><th class="faction">Dire</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
 			if(data[i].position > 100) {
 				html += '<tr>\n\
