@@ -35,7 +35,8 @@ var MatchManager = (function($) {
 		numberOfMatchesToGet: 10,
 		timeout: 500,
 		fadeTime: 500,
-		matchType: 'c' // c = competitive, p = public, b = both
+		matchType: 'c', // c = competitive, p = public, b = both,
+		preloadImageDelay: 2000
 	};
 
 	var currentMatch;
@@ -189,9 +190,6 @@ var MatchManager = (function($) {
 			},
 			complete: function() {
 				canGetMatches = true;
-				if (oldCount === 0) {
-					preloadImages();
-				}
 				if (typeof callback !== 'undefined') {
 					callback();
 				}
@@ -205,7 +203,8 @@ var MatchManager = (function($) {
 	var nextMatch = function() {
 		currentMatch = matches.shift();
 		getMatches();
-		preloadImages();
+		// delay, so we can actually get current games images first
+		setTimeout(function(){ preloadImages(); }, config.preloadImageDelay);
 
 		if (typeof currentMatch !== 'undefined') {
 			canGuess = true;
@@ -338,9 +337,9 @@ var MatchManager = (function($) {
 		
 		//direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
 		//radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
-		
+		console.log(match);
 		$('#match-info-details #match-mode').html(modes[match.mode]);
-		if (match.mode === '1') {
+		if (match.leagueId === '0') {
 			// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
 			var mmrRange = (match.mmr - match.mmr % 500).toString() + ' - ' + (match.mmr - match.mmr % 500 + 500).toString();
 			$('#match-info-details #match-mmr').show();
@@ -348,7 +347,7 @@ var MatchManager = (function($) {
 			$('#match-info-details #match-mmr').attr('title', 'MMR range');
 		}
 		// 2 is captains mode, and 16 is captains draft
-		else if (match.mode === '2' || match.mode === '16') {
+		else {
 			$('#match-info-details #match-mmr').html(', competitive match (<a href="http://wiki.teamliquid.net/dota2/Version_' + match.version + '" target="_new">' + match.version + '</a>)');
 			$('#match-info-details #match-mmr').attr('title', '');
 		}
