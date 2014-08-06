@@ -122,6 +122,15 @@ insert into `patch` (`version`, `released`) values('6.80c','2014-03-03 00:00:00'
 insert into `patch` (`version`, `released`) values('6.81','2014-04-29 00:00:00');
 insert into `patch` (`version`, `released`) values('6.81b','2014-06-02 00:00:00');
 
+CREATE TABLE `guess` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `match_id` bigint(20) unsigned NOT NULL,
+  `guess` tinyint(3) unsigned NOT NULL,
+  `ip` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_ip` (`match_id`,`guess`,`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
 --
 -- Constraints for dumped tables
 --
