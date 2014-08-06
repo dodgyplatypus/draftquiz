@@ -5,6 +5,7 @@ chdir('../');
 require_once('config.php');
 require_once(INC_PATH . 'class/PdoFactory.php');
 require_once(INC_PATH . 'class/Error.php');
+require_once(INC_PATH . 'class/GuessManager.php');
 
 $publicId = (int) $_GET['publicId'];
 $guess = $_GET['guess'];
@@ -17,7 +18,7 @@ elseif ($guess !== "0" && $guess !== "1") {
 	$output['error'][] = "You must specify guess";
 }
 else {
-	try {		
+	try {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		$stmt = $db->prepare('SELECT m.match_id, m.duration, m.winner, m.mode, m.league_id, m.radiant_name, m.dire_name, h.name, h.en_name, p.position, p.kills, p.deaths, p.assists, p.level'
 				. ', IF(p.deaths=0, (p.kills + p.assists), ((p.kills + p.assists) / p.deaths)) AS kda'
@@ -48,6 +49,10 @@ else {
 												'level' => $row['level'],
 												'kda' => $row['kda']);
 		}
+		$guessManager = new GuessManager();
+		$guessManager->add($output['match_id'], $guess);
+		$stats = $guessManager->getStats($output['match_id']);
+		$output['stats'] = $stats;
 	}
 	catch (Exception $e) {
 		die($e);
@@ -58,6 +63,7 @@ else {
 if (count($output) === 0) {
 	$output['error'][] = "No games found with publicId " . $publicId;
 }
+
 
 header('Content-Type: application/json');
 echo json_encode($output);
