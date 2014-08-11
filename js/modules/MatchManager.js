@@ -35,7 +35,7 @@ var MatchManager = (function($) {
 		numberOfMatchesToGet: 10,
 		timeout: 500,
 		fadeTime: 500,
-		matchType: 'c', // c = competitive, p = public, b = both,
+		matchType: 'c', // c = competitive, p = public, b = both, ti4_main only ti4 main event
 		preloadImageDelay: 2000
 	};
 
