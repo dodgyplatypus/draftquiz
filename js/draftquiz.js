@@ -11,6 +11,9 @@ $(document).ready(function() {
 	else if (config['matchType'] === 'b') {
 		$('#select-match-type').html('Both');
 	}
+	else if (config['matchType'] === 'ti4_main') {
+		$('#select-match-type').html('TI4 Main Event + Playoffs');
+	}
 });
 
 $(document).on('click', '.vote-dire', function() {
@@ -31,10 +34,10 @@ $(document).on('click', '#button-next-match', function() {
 $(document).on('click', '#select-match-type', function() {
 	var b = $('#select-match-type');
 	if (b.html() == 'Competitive') {
-		b.html('TI4 Main');
+		b.html('TI4 Main Event + Playoffs');
 		MatchManager.updateConfig({'matchType': 'ti4_main'});
 	}
-	else if (b.html() == 'TI4 Main') {
+	else if (b.html() == 'TI4 Main Event + Playoffs') {
 		b.html('Public');
 		MatchManager.updateConfig({'matchType': 'p'});
 	}
