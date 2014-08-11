@@ -8,7 +8,7 @@ require_once(INC_PATH . 'class/Match.php');
 require_once(INC_PATH . 'class/MatchManager.php');
 
 $count = isset($_GET['count']) ? (int) $_GET['count'] : 10;
-$matchType = $_GET['type'] === 'c' || $_GET['type'] === 'b' || $_GET['type'] === 'p' ? $_GET['type'] : 'b';
+$matchType = $_GET['type'] === 'c' || $_GET['type'] === 'b' || $_GET['type'] === 'p' || $_GET['type'] === 'ti4_main' ? $_GET['type'] : 'b';
 
 $matchManager = new MatchManager();
 $matches = $matchManager->getRandomMatches($count, $matchType);
