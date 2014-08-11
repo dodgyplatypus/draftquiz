@@ -236,18 +236,18 @@ var MatchManager = (function($) {
 		// start results
 		html += '<div class="row"><div class="small-6 columns">';
 		
-		// radiant table
+		// dire table
 		if(data.winner === '0') {
-			html += '<h4>' + radiantTeamName + ' loss</h4>';
+			html += '<h4><strong>' + direTeamName + ' victory</strong></h4>';
 		}
 		else {
-			html += '<h4><strong>' + radiantTeamName + ' victory</strong></h4>';
+			html += '<h4>' + direTeamName + ' loss</h4>';
 		}
 		
-		html += '<table id="radiant-results">';
-		html += '<tr><th class="faction">Radiant</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
+		html += '<table id="dire-results">';
+		html += '<tr><th class="faction">Dire</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
-			if(data[i].position < 100) {
+			if(data[i].position > 100) {
 				html += '<tr>\n\
 							<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
 							<td>' + data[i].en_name + '</td>\n\
@@ -264,18 +264,18 @@ var MatchManager = (function($) {
 		// switch column
 		html += '</div><div class="small-6 columns">';
 		
-		// dire table
+		// radiant table
 		if(data.winner === '0') {
-			html += '<h4><strong>' + direTeamName + ' victory</strong></h4>';
+			html += '<h4>' + radiantTeamName + ' loss</h4>';
 		}
 		else {
-			html += '<h4>' + direTeamName + ' loss</h4>';
+			html += '<h4><strong>' + radiantTeamName + ' victory</strong></h4>';
 		}
 		
-		html += '<table id="dire-results">';
-		html += '<tr><th class="faction">Dire</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
+		html += '<table id="radiant-results">';
+		html += '<tr><th class="faction">Radiant</th><th class="hero">Hero</th><th>Level</th><th>K</th><th>D</th><th>A</th><th>KDA</th></tr>';
 		for(i = 0; i < 10; i++) {
-			if(data[i].position > 100) {
+			if(data[i].position < 100) {
 				html += '<tr>\n\
 							<td class="portrait"><img src="images/heroportraits/' + data[i].name + '.png" /></td>\n\
 							<td>' + data[i].en_name + '</td>\n\
@@ -337,7 +337,6 @@ var MatchManager = (function($) {
 		
 		//direHtml += '<li><button class="button round right">Guess<br/>Dire</button></li>';
 		//radiantHtml += '<li><button class="button round right">Guess<br/>Radiant</button></li>';
-		console.log(match);
 		$('#match-info-details #match-mode').html(modes[match.mode]);
 		if (match.leagueId === '0') {
 			// converts 3099 to 3000 - 3500, since we don't know mmr too accurately
