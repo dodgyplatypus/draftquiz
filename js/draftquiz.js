@@ -31,14 +31,18 @@ $(document).on('click', '#button-next-match', function() {
 $(document).on('click', '#select-match-type', function() {
 	var b = $('#select-match-type');
 	if (b.html() == 'Competitive') {
-		b.html('Both');
-		MatchManager.updateConfig({'matchType': 'b'});
+		b.html('TI4 Main');
+		MatchManager.updateConfig({'matchType': 'ti4_main'});
 	}
-	else if (b.html() == 'Both') {
+	else if (b.html() == 'TI4 Main') {
 		b.html('Public');
 		MatchManager.updateConfig({'matchType': 'p'});
 	}
 	else if (b.html() == 'Public') {
+		b.html('All');
+		MatchManager.updateConfig({'matchType': 'b'});
+	}
+	else if (b.html() == 'All') {
 		b.html('Competitive');
 		MatchManager.updateConfig({'matchType': 'c'});
 	}
