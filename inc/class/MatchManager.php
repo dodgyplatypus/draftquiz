@@ -92,6 +92,10 @@ class MatchManager {
 		return $matches;
 	}
 	
+	/**
+	 * Fetches matches based on leagueId
+	 * Even thou matchlimit is maxed in api to 100 at time, this supports larger via multiple api calls
+	 */
 	public function fetchFromApiByLeagueId($leagueId, $matchLimit = 25, $mmr = false, $debug = true) {
 		$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
 		
@@ -107,21 +111,35 @@ class MatchManager {
 		
 		$matchesData = json_decode($json, true);
 		
-		$matches = array();
-		for($i = 0; $i < count($matchesData['result']['matches']); $i++) {
-			$match = new Match($matchesData['result']['matches'][$i]['match_id']);
-			$match->fetchFromApi();
-			$match->mmr = $mmr;
-			if ($match->isValid($debug)) {
-				$match->saveToDb();
-				if ($debug === true) {
-					echo "This match is a keeper! {$match->matchId}\n";
+		$matchesProcessed = 0;
+		
+		while (1 === 1) {
+			$matches = array();
+			for($i = 0; $i < count($matchesData['result']['matches']); $i++) {
+				$match = new Match($matchesData['result']['matches'][$i]['match_id']);
+				$match->fetchFromApi();
+				$match->mmr = $mmr;
+				if ($match->isValid($debug)) {
+					$match->saveToDb();
+					if ($debug === true) {
+						echo "This match is a keeper! {$match->matchId}\n";
+					}
+					$matches[] = $match;
 				}
-				$matches[] = $match;
+				$matchesProcessed++;
+			}
+			if ($matchesProcessed < $matchLimit && $matchesData['result']['results_remaining'] > 0) {
+				$matchesToFetch = ($matchLimit - $matchesProcessed) > 100 ? 100 : ($matchLimit - $matchesProcessed);
+				$json = file_get_contents('https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?league_id=' . $leagueId . '&matches_requested=' . $matchesToFetch . '&key=' . API_KEY . '&start_at_match_id=' . $match->matchId);
+				$matchesData = json_decode($json, true);
+				if ($debug) {
+					echo "Processed $matchesProcessed, but matchLimit is $matchLimit, fetching another $matchesToFetch";
+				}
+			}
+			else {				
+				return $matches;
 			}
 		}
-		
-		return $matches;
 	}
 	
 	public function getRandomMatches($count = 10, $matchType = 'b') {
@@ -134,6 +152,9 @@ class MatchManager {
 		}
 		elseif ($matchType === 'p') {
 			$matchTypeSql = 'league_id = 0';
+		}
+		elseif ($matchType === 'ti4_main') {
+			$matchTypeSql = 'league_id = 600 && start_time > 1404691200';
 		}
 		else {
 			$matchTypeSql = '1 = 1';
@@ -160,6 +181,9 @@ class MatchManager {
 					$matches[] = $match;
 				}
 				elseif ($matchType === 'b') {
+					$matches[] = $match;
+				}
+				elseif ($matchType === 'ti4_main' && $match->leagueId == 600) {
 					$matches[] = $match;
 				}
 			}
