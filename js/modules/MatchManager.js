@@ -229,8 +229,8 @@ var MatchManager = (function($) {
 		var radiantTeamName = 'Radiant';
 		var direTeamName = 'Dire';
 		if (data.league_id !== '0') {
-			radiantTeamName = data.radiant_name;
-			direTeamName = data.dire_name;
+			radiantTeamName = 'Radiant - ' + data.radiant_name;
+			direTeamName = 'Dire - ' + data.dire_name;
 		}
 		
 		// start results
@@ -241,7 +241,7 @@ var MatchManager = (function($) {
 			html += '<h4><strong>' + direTeamName + ' victory</strong></h4>';
 		}
 		else {
-			html += '<h4>' + direTeamName + ' loss</h4>';
+			html += '<h4>Dire - ' + direTeamName + ' loss</h4>';
 		}
 		
 		html += '<table id="dire-results">';
