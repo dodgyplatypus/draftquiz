@@ -241,7 +241,7 @@ var MatchManager = (function($) {
 			html += '<h4><strong>' + direTeamName + ' victory</strong></h4>';
 		}
 		else {
-			html += '<h4>Dire - ' + direTeamName + ' loss</h4>';
+			html += '<h4>' + direTeamName + ' loss</h4>';
 		}
 		
 		html += '<table id="dire-results">';
