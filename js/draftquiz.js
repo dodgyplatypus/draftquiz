@@ -9,7 +9,7 @@ $(document).ready(function() {
 		$('#select-match-type').html('Public');
 	}
 	else if (config['matchType'] === 'b') {
-		$('#select-match-type').html('Both');
+		$('#select-match-type').html('All');
 	}
 	else if (config['matchType'] === 'ti4_main') {
 		$('#select-match-type').html('TI4 Main Event + Playoffs');
