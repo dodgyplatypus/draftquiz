@@ -127,6 +127,7 @@ CREATE TABLE `guess` (
   `match_id` bigint(20) unsigned NOT NULL,
   `guess` tinyint(3) unsigned NOT NULL,
   `ip` varchar(15) DEFAULT NULL,
+  `added` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_ip` (`match_id`,`guess`,`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
