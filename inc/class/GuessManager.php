@@ -14,7 +14,7 @@ class GuessManager {
 	function add($matchId, $guess) {
 		try {
 			$db = PdoFactory::getInstance(DB_CONNECTION, DB_USER, DB_PW);
-			$stmt = $db->prepare('INSERT INTO `' . DB_TABLE_PREFIX . 'guess` SET match_id = :match_id, guess = :guess, ip = :ip');
+			$stmt = $db->prepare('INSERT INTO `' . DB_TABLE_PREFIX . 'guess` SET match_id = :match_id, guess = :guess, ip = :ip, added = NOW()');
 			
 			$stmt->execute(array(':match_id' => $matchId, ':guess' => $guess, ':ip' => $_SERVER['REMOTE_ADDR']));
 			return true;
