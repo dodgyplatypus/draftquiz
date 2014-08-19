@@ -85,21 +85,22 @@ body {
 		text-shadow: 1px 1px 1px #dedede;
 		padding: 0 1rem 0 0;
 	}
-	
-	#button-settings {
-		cursor: pointer;
-		margin: 0;
-		padding: 8px 16px;
-		color: #000;
-		background: #bbb;
-		
-		&:hover, &:active {
-			background: #ccc;
-		}
-	}
 }
 
 /* CONTENT */
+
+.button-gray {
+	cursor: pointer;
+	margin: 0;
+	padding: 8px 16px;
+	color: #000;
+	background: #bbb;
+	
+	&:hover, &:active {
+		background: #ccc;
+	}
+}
+	
 .vote-dire, .vote-radiant {
 	border: 2px solid #333333;
 	
@@ -345,12 +346,12 @@ body {
 		@include small-body-text();
 	}
 	
+	.button {
+		font-size: 1.2em;
+	}
+	
 	#score {
 		@include small-body-text();
-		
-		.button {
-			font-size: 1.2em;
-		}
 	}
 	
 	.vote-dire, .vote-radiant {
