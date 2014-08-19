@@ -351,6 +351,8 @@ var MatchManager = (function($) {
 			$('#match-info-details #match-mmr').attr('title', '');
 		}
 		
+		$('#match-info-details #match-mmr').append(', duration ' + Math.round(match.duration / 60) + ' min');
+		
 		$('#radiant-heroes').html(radiantHtml);
 		$('#dire-heroes').html(direHtml);
 		
